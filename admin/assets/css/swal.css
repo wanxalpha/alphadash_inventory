@@ -1,0 +1,60 @@
+       body {
+           background-color: #000;
+           font-family: 'Poppins', sans-serif;
+           color: #fff;
+
+       }
+
+       .swal-title {
+           color: #000 !important;
+       }
+
+       .swal-text {
+           color: #000 !important;
+       }
+
+       .swal-modal {
+           background: #fff !important;
+           color: #fff !important;
+
+       }
+
+       /* .swal-modal::after {
+           content: '';
+           position: absolute;
+           left: -2px;
+           top: -2px;
+           background: linear-gradient(to top, #19402D, #22723E) !important;
+           background-size: 400%;
+           width: calc(100% + 6px);
+           height: calc(100% + 6px);
+           z-index: -1;
+           border-radius: calc();
+           filter: blur(3px);
+       } */
+
+
+       .swal-button {
+           padding: 10px 35px;
+           background: linear-gradient(to top, #19402D, #22723E) !important;
+           font-weight: 500;
+           border-radius: 7px;
+           /* display: none; */
+           margin: 0px auto;
+       }
+
+       .swal-footer {
+           text-align: center !important;
+       }
+
+       .swal2-styled.swal2-confirm {
+           padding: 10px 35px;
+           background: linear-gradient(to top, #19402D, #22723E) !important;
+           font-weight: 500;
+           border-radius: 10px;
+       }
+
+
+       .swal2-content {
+           color: #000 !important;
+       }

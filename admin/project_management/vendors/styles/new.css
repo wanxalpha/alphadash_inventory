@@ -1,0 +1,25 @@
+/* ---------------
+Dashboard - admin
+------------------*/
+
+.widget-style1 .widget-data-dash {
+	width: calc(100% - 80px);
+	padding: 0 5px 0 15px
+}
+
+.right-sidebar .right-sidebar-body .right-sidebar-body-content,
+.widget-style2 .widget-data-dash {
+	padding: 20px
+}
+
+.widget-style3 .widget-data-dash {
+	width: calc(100% - 60px);
+	padding-top: 20px;
+    padding-right: 15px;
+    padding-bottom: 20px;
+    padding-left: 15px;
+}
+
+/* ---------------
+Feedback form
+------------------*/

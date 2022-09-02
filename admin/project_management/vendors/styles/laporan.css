@@ -1,0 +1,23 @@
+/**
+* Template Name: FlexStart - v1.4.0
+* Template URL: https://bootstrapmade.com/flexstart-bootstrap-startup-template/
+* Author: BootstrapMade.com
+* License: https://bootstrapmade.com/license/
+*/
+
+/* -----------------------------------
+    Laporan Jadual
+-------------------------------------- */
+
+
+
+.laporan-jad {
+    float: left;
+    width: 25%;
+    padding: 0 20px;
+}
+
+.box-jadual{
+    padding: 10px;
+}
+
