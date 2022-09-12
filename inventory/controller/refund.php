@@ -7,6 +7,7 @@
 
         if($action == 'create')
         {
+            $comp_id = $_SESSION['company'];
 
             if(isset($_FILES['attachment'])){
                 $attachment = $_FILES['attachment'];
@@ -25,8 +26,8 @@
                 $timestamp = date('Y-m-d H:i:s');
             }
 
-            $sql = "INSERT INTO inv_refund (stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
-            VALUES ('$_POST[stakeholder_id]','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
+            $sql = "INSERT INTO inv_refund (company_id,stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
+            VALUES ('$comp_id','$_POST[stakeholder_id]','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
 
             $result = $conn->query($sql);
 
@@ -37,13 +38,12 @@
             foreach ($products as $key => $product) {
 
                 $product_id = $product['product_id'];
-                // echo($product_id.'|');exit();
                 $quantity = $product['quantity'];
                 $remark = $product['remark'];
 
                 $sql_product = "INSERT INTO inv_refund_product (refund_id,product_id,quantity,remark,created_by,created_at) 
                 VALUES ('$lastInsert','$product_id','$quantity','$remark',$emp_id,current_timestamp())";
-// echo($sql);exit();
+                
                 $result = $conn->query($sql_product);
 
             }
@@ -142,8 +142,14 @@
         elseif($action == 'list')
         {
             $comp_id = $_SESSION['company'];
+            $designation_id = $_SESSION['designation'];
+            $emp_id =  $_SESSION['emp_id'];
 
-            $query =  ' where a.deleted_at IS NULL';
+            if($designation_id == '3'){
+                $query =  " where a.deleted_at IS NULL and a.company_id = '$comp_id'and a.stakeholder_id = '$emp_id'";
+            }else{
+                $query =  " where a.deleted_at IS NULL and company_id = '$comp_id'";
+            }
 
             if(isset($_GET["month"]) ? $_GET["month"] : null ){
                 $query = $query." AND MONTH(a.created_at) = ".$_GET['month'];
@@ -157,9 +163,9 @@
                 $query = $query." AND a.stakeholder_id = ".$_GET['stakeholder'];
             }
 
-            $sql = "SELECT a.id , a.reference_number as reference_number, a.status as status,a.created_at as created_at, b.name as stakeholder_name 
+            $sql = "SELECT a.id , a.reference_number as reference_number, a.status as status,a.created_at as created_at, b.f_first_name as stakeholder_name 
                     FROM inv_refund a 
-                    LEFT JOIN inv_contact b ON a.stakeholder_id = b.id 
+                    LEFT JOIN employees b ON a.stakeholder_id = b.f_id 
                     $query
                     ORDER BY a.created_at desc";
 
@@ -177,38 +183,73 @@
 
                 if($row['status'] == '0'){
                     $status = 'Open';
-                }else{
+                }elseif($row['status'] == '1'){
                     $status = 'Validated';
+                }elseif($row['status'] == '2'){
+                    $status = 'Returned';
                 }
-                if($row['status'] == '0'){
-                    echo '
-                    <tr>
-                        <td>'.$x.'</td>
-                        <td>' .$stakeholder_name. '</td>
-                        <td>' .$reference_number.'</td>
-                        <td>' .$status.'</td>
-                        <td>' .$date_created.'</td>
 
-                        <td class="text-center">
-                            <a class="btn btn-sm btn-warning" href="edit.php?id='.$id.'">Edit</a>
-                            <button class="btn btn-sm btn-danger refund_delete" value="'.$id.'">Delete</button>
-                        </td>
-                    </tr>
-                    ';
+                if(($_SESSION['designation'] != '3')){
+                    if($row['status'] == '0'){
+                        echo '
+                        <tr>
+                            <td>'.$x.'</td>
+                            <td>' .$stakeholder_name. '</td>
+                            <td>' .$reference_number.'</td>
+                            <td>' .$status.'</td>
+                            <td>' .$date_created.'</td>
+
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-warning" href="edit.php?id='.$id.'">Edit</a>
+                                <button class="btn btn-sm btn-danger refund_delete" value="'.$id.'">Delete</button>
+                            </td>
+                        </tr>
+                        ';
+                    }else{
+                        echo '
+                        <tr>
+                            <td>'.$x.'</td>
+                            <td>' .$stakeholder_name. '</td>
+                            <td>' .$reference_number.'</td>
+                            <td>' .$status.'</td>
+                            <td>' .$date_created.'</td>
+
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-warning" href="view.php?id='.$id.'">View</a>
+                            </td>
+                        </tr>
+                        ';
+                    }
                 }else{
-                    echo '
-                    <tr>
-                        <td>'.$x.'</td>
-                        <td>' .$stakeholder_name. '</td>
-                        <td>' .$reference_number.'</td>
-                        <td>' .$status.'</td>
-                        <td>' .$date_created.'</td>
+                    if($row['status'] == '1'){
+                        echo '
+                        <tr>
+                            <td>'.$x.'</td>
+                            <td>' .$stakeholder_name. '</td>
+                            <td>' .$reference_number.'</td>
+                            <td>' .$status.'</td>
+                            <td>' .$date_created.'</td>
 
-                        <td class="text-center">
-                            <a class="btn btn-sm btn-warning" href="view.php?id='.$id.'">View</a>
-                        </td>
-                    </tr>
-                    ';
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-warning" href="return.php?id='.$id.'">Edit</a>
+                            </td>
+                        </tr>
+                        ';
+                    }else{
+                        echo '
+                        <tr>
+                            <td>'.$x.'</td>
+                            <td>' .$stakeholder_name. '</td>
+                            <td>' .$reference_number.'</td>
+                            <td>' .$status.'</td>
+                            <td>' .$date_created.'</td>
+
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-warning" href="view.php?id='.$id.'">View</a>
+                            </td>
+                        </tr>
+                        ';
+                    }
                 }
             }
         } elseif($action == 'export'){
@@ -315,14 +356,23 @@
                     
 
                     $result = $conn->query($sql_update_available_stock);
-                }else{
-                    $sql_add_available_stock = "INSERT INTO inv_available_stock (product_id,quantity) 
-                    VALUES ('$product[product_id]','$product[quantity]')";
-                    $result = $conn->query($sql_add_available_stock);
                 }
         }
         $sql = null;
         $action = 'validate';
+        postAction('Refund',$action,$sql,"Location:../resource/refund/index.php");
+            
+    }
+
+    if (isset($_GET['retrieved'])) {
+        $id = $_GET['retrieved'];
+
+        $sql = "UPDATE inv_refund  SET status='2', updated_at=current_timestamp() where id='$id'";
+        
+        $result = mysqli_query($conn, $sql);
+        
+        $sql = null;
+        $action = 'retrieved';
         postAction('Refund',$action,$sql,"Location:../resource/refund/index.php");
             
     }

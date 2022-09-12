@@ -1,5 +1,5 @@
 <?php
-    include_once('../../controller/refund.php');
+    include_once('../../controller/stock_in.php');
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
@@ -11,28 +11,17 @@
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Stock Return</h4>
+        <h4 class="fw-bold py-3 mb-4">Stock In</h4>
 
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="card">
-                    <h5 class="card-header2">Add Stock Return</h5>
+                    <h5 class="card-header2">Add Stock In</h5>
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/refund.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/stock_out_supplier.php" enctype="multipart/form-data">
                            
                             <div class="row">
-
-                                <div class="mb-3 col-md-3">
-                                    <label for="name" class="form-label">Stakeholder</label>
-                                    <select name="stakeholder_id" id="stakeholder_id" class="select2 form-select" required>
-                                        <option hidden value=""> ---- Select Stakeholder ----</option>
-                                        <?php while ($row = mysqli_fetch_array($stakeholder)) { ?>
-                                        <option value="<?php echo $row['id'] ?>"> <?php echo $row['name'] ?>
-                                        </option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
                                
                                 <div class="mb-3 col-md-3">
                                     <label for="reference_number" class="form-label">Referance Number</label>
@@ -49,7 +38,7 @@
                                     <input class="form-control" type="file" name="attachment" id="attachment" required />
                                 </div>
                             
-                                <div class="mb-6 col-md-6">
+                                <div class="mb-6 col-md-3">
                                     <label for="remark" class="form-label">Remark</label>
                                     <textarea type="text" class="form-control" id="remark" name="remark">
                                     </textarea>
@@ -88,8 +77,8 @@
                                             </div>
 
                                             <div class="mb-3 col-lg-3">
-                                            <label for="remark" class="form-label">Remark</label>
-                                            <textarea type="text" class="form-control" id="remark" name="remark"></textarea>
+                                                <label for="name" class="form-label">Expired Date</label>
+                                                <input class="form-control" type="date" name="expired_date" id="expired_date" />
                                             </div>
 
                                             <div class="mb-2 col-lg-2">
@@ -101,7 +90,6 @@
                                     </div>
                                 </div>
                             <!-- </div> -->
-
                             <div class="mt-4">
                                 <a href="index.php" type="submit"
                                     class="btn btn-info btn-default btn-squared px-30 float-left">Back</a>

@@ -88,6 +88,15 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                         <small>
                             <?php echo $post_name ?>
                         </small>
+                        <h5>
+                            <?php echo $_SESSION['role'] ?>
+                        </h5>
+                        <br>
+                        <?php if($_SESSION['designation_name']){?>
+                            <small>
+                                <?php echo $_SESSION['designation_name'] ?>
+                            </small>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -98,119 +107,100 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
 
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Dashboard</span></li>
 
-                    <!-- <li class="menu-item">
-                        <a href="../../../<?php echo $file_role ?>/dashboard/dashboard-a.php" target="_blank" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div data-i18n="Analytics">Human Resource</div>
-                        </a>
-                    </li> -->
-
                     <li class="menu-item">
-                        <a class="menu-link">
+                        <a href="../dashboard/index.php" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Inventory</div>
                         </a>
                     </li>
 
-                    <!-- <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div data-i18n="Analytics">Project Management</div>
-                        </a>
-
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="../../../<?php echo $file_role ?>/project_management/dashboard.php" class="menu-link">
-                                    <div data-i18n="Blank">Project Dashboard</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="../../../<?php echo $file_role ?>/project_management/prodetail.php" class="menu-link">
-                                    <div data-i18n="Without menu">Project Details</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="../../../<?php echo $file_role ?>/project_management/modul.php" class="menu-link">
-                                    <div data-i18n="Blank">Project Module</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="../../../<?php echo $file_role ?>/project_management/approval.php" class="menu-link">
-                                    <div data-i18n="Blank">Project Approval</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="../../../<?php echo $file_role ?>/project_management/setup.php" class="menu-link">
-                                    <div data-i18n="Blank">Project Setup</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li> -->
-
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Menu</span></li>
 
-                    <li class="menu-item">
-                        <a href="../available_stock/index.php" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
-                            <div data-i18n="Documentation">Available Stock</div>
-                        </a>
-                    </li>
+                    <?php if($_SESSION['designation'] == '4'){ ?>
+                        <li class="menu-item">
+                            <a href="../available_stock/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Available Stock</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="../stock_in/index.php" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
-                            <div data-i18n="Documentation">Stock In</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="../stock_in/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Stock In</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="../stock_out/index.php" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
-                            <div data-i18n="Documentation">Stock Out</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="../stock_out/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
+                                <div data-i18n="Documentation">Stock Out</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="../refund/index.php" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
-                            <div data-i18n="Documentation">Stock Return</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="../refund/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
+                                <div data-i18n="Documentation">Stock Return</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="../contact/index.php" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
-                            <div data-i18n="Documentation">Stakeholders</div>
-                        </a>
-                    </li>
+                        <!-- <li class="menu-item">
+                            <a href="../contact/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
+                                <div data-i18n="Documentation">Stakeholders</div>
+                            </a>
+                        </li> -->
 
-                    <li class="menu-item">
-                        <a href="../product/index.php" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
-                            <div data-i18n="Documentation">Product</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="../inventory_account/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
+                                <div data-i18n="Documentation">Stakeholders</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div data-i18n="Analytics">Setting</div>
-                        </a>
+                        <li class="menu-item">
+                            <a href="../product/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
+                                <div data-i18n="Documentation">Product</div>
+                            </a>
+                        </li>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="../product_category/index.php" class="menu-link">
-                                    <div data-i18n="Blank">Product Category</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="../stakeholder_category/index.php" class="menu-link">
-                                    <div data-i18n="Blank">Stakeholder Category</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                                <div data-i18n="Analytics">Setting</div>
+                            </a>
 
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="../product_category/index.php" class="menu-link">
+                                        <div data-i18n="Blank">Product Category</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="../stakeholder_category/index.php" class="menu-link">
+                                        <div data-i18n="Blank">Stakeholder Category</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    <?php } elseif ($_SESSION['designation'] == '3') {?>
+
+                        <li class="menu-item">
+                            <a href="../stock_out_supplier/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Stock Out</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="../refund/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
+                                <div data-i18n="Documentation">Stock Return</div>
+                            </a>
+                        </li>
+                    <?php } ?>
                     <!-- Misc -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
                     <!-- <li class="menu-item">

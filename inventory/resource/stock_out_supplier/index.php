@@ -1,5 +1,5 @@
 <?php
-    include_once('../../controller/refund.php');
+    include_once('../../controller/stock_out_supplier.php');
     include_once("../../layouts/menu.php"); 
 
     $stakeholder = getSupplier();
@@ -7,7 +7,8 @@
 
 <div class="content-wrapper">
   <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4">Stock Return</h4>
+    <h4 class="fw-bold py-3 mb-4">Stock Out</h4>
+
     <div class="row mb-12">
       <div class="col-md-2">
         <label class="form-label">Month</label>
@@ -33,35 +34,20 @@
           </option>
           <?php } ?>
         </select>
-      </div>
-
-      <div class="col-md-2">
-        <label class="form-label">Stakeholder</label>
-        <select name="filter_stakeholder" id="filter_stakeholder" class="select2 form-select" required>
-          <option hidden value="">Select Stakeholder</option>
-          <?php  
-              $get_status_stakeholder = isset($_GET['stakeholder']) ? $_GET['stakeholder'] : null ;
-          ?>
-          <?php foreach($stakeholder as $idx => $sh) { ?>
-          <option value="<?php echo $sh['id']?>" <?php if($get_status_stakeholder == $sh['id']) echo 'selected'; ?>>
-            <?php echo $sh['name'] ?> </option>
-          <?php } ?>
-        </select>
-      </div>
+      </div>  
 
       <div class="col-md-2">
         <label class="form-label"> </label>
         <button id="search" style="float:bottom;" class="btn btn-primary form-control">Search</button>
       </div>
-      <div class="col-md-4" align='right'>
+      <div class="col-md-6" align='right'>
       <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
-        <?php if ($_SESSION['designation'] != '3'){?>
-            &nbsp;
-            <a href="../refund/create.php" class="btn btn-primary">Add Stock Return</a>  
-        <?php } ?>
+        &nbsp;
+        <a href="../stock_out_supplier/create.php" class="btn btn-primary">Add Stock Out</a>  
       </div>
     </div>
-    <br>
+
+<br>
     <div class="row">
       <div class="col-md-12">
         <div class="card">
@@ -70,14 +56,14 @@
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>Stakeholder</th>
+                  <!-- <th>Stakeholder</th> -->
                   <th>Reference Number</th>
                   <th>Status</th>
                   <th>Date Created</th>
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
-              <tbody class="table-border-bottom-0" id="index_refund">
+              <tbody class="table-border-bottom-0" id="index_stock_out_supplier">
               </tbody>
             </table>
           </div>
@@ -89,4 +75,4 @@
 
 <?php include_once("../../layouts/footer.php"); ?>
 
-<script type="text/javascript" src="../../assets/js/resource/refund.js"> </script>
+<script type="text/javascript" src="../../assets/js/resource/stock_out_supplier.js"> </script>

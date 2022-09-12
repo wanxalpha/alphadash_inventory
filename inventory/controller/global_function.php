@@ -50,6 +50,8 @@ function postAction($type,$next_action,$sql,$route)
 
     elseif($result == true && $next_action == 'validate') $_SESSION["session_toast_message"] = 'Success Validated '.$type;
 
+    elseif($result == true && $next_action == 'retrieved') $_SESSION["session_toast_message"] = 'Success Retrieved '.$type;
+
     else $_SESSION["session_toast_message"] = 'Failed';
 
     $_SESSION["session_toast_type"] = $result == true ? 'success' : 'error';
@@ -97,7 +99,7 @@ function getProductCategory(){
 
     $sql = "SELECT id,name 
             FROM inv_product_category 
-            where deleted_at IS NULL";
+            where deleted_at IS NULL and company_id = '$comp_id'";
 
     return $result_product_category = mysqli_query($conn, $sql);
 
@@ -105,11 +107,11 @@ function getProductCategory(){
 
 function getProduct(){
     global $conn;
-    // $comp_id = $_SESSION['company'];
+    $comp_id = $_SESSION['company'];
 
     $sql = "SELECT id,name 
             FROM inv_product 
-            where deleted_at IS NULL";
+            where deleted_at IS NULL and company_id = '$comp_id'";
 
     return $result_product = mysqli_query($conn, $sql);
 
@@ -117,11 +119,11 @@ function getProduct(){
 
 function getSupplier(){
     global $conn;
-    // $comp_id = $_SESSION['company'];
+    $comp_id = $_SESSION['company'];
 
-    $sql = "SELECT id,name 
-            FROM inv_contact 
-            where category_id = '3' and deleted_at IS NULL";
+    $sql = "SELECT f_id as id,f_first_name as name 
+            FROM employees
+            where f_designation = '3' and f_delete = 'N' and f_company_id = '$comp_id'";
 
     return $result_stakeholder = mysqli_query($conn, $sql);
 
@@ -129,11 +131,11 @@ function getSupplier(){
 
 function getCustomer(){
     global $conn;
-    // $comp_id = $_SESSION['company'];
+    $comp_id = $_SESSION['company'];
 
-    $sql = "SELECT id,name 
-            FROM inv_contact 
-            where category_id = '2' and deleted_at IS NULL";
+    $sql = "SELECT f_id as id,f_first_name as name 
+            FROM employees
+            where f_designation = '2' and f_delete = 'N' and f_company_id = '$comp_id'";
 
     return $result_stakeholder = mysqli_query($conn, $sql);
 

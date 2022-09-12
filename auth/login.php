@@ -30,9 +30,22 @@ if (isset($_POST['login'])) {
     $emp_id = $row['f_id'];
     $emp_level = $row['f_user_level'];
     $company_id = $row['f_company_id'];
+    $designation = $row['f_designation'];
+
+    if($row['f_department'] == '41'){
+      $sql_designation = "SELECT * 
+                  FROM inv_stakeholder_category 
+                  WHERE id = '$designation'";
+
+    $result_designation = mysqli_query($conn, $sql_designation);
+    $row_designation = mysqli_fetch_array($result_designation);
+
+    }
+
+    $designation_name = $row_designation['name'];
     
     $sql = "INSERT INTO login_time (f_emp_id, f_clock_in, f_created_date, f_modified_date) VALUES ('$emp_id', '$curtime', '$now', '$now')";
-    // echo $sql; exit;
+
     $result = mysqli_query($conn, $sql);
 
     // $_SESSION['member_id'] = $member_id;
@@ -40,7 +53,13 @@ if (isset($_POST['login'])) {
     $_SESSION['emp_id'] = $emp_id;
     $_SESSION['role'] = $emp_level;
     $_SESSION['company'] = $company_id;
+    $_SESSION['designation'] = $designation;
 
+    if($row_designation){
+      $_SESSION['designation_name'] = $designation_name;
+    }else{
+      $_SESSION['designation_name'] = '';
+    }
 
 
     // if($emp_level == "Admin" || $emp_level == "Master"){

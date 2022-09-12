@@ -9,9 +9,10 @@
         if($action == 'create')
         {
             $emp_id = $_SESSION['emp_id'];
+            $comp_id = $_SESSION['company'];
 
-            $sql = "INSERT INTO inv_product_category (name,remark,created_by,created_at) 
-            VALUES ('$_POST[name]','$_POST[remark]',$emp_id,current_timestamp())";
+            $sql = "INSERT INTO inv_product_category (company_id,name,remark,created_by,created_at) 
+            VALUES ('$comp_id','$_POST[name]','$_POST[remark]',$emp_id,current_timestamp())";
             postAction('Product Category',$action,$sql,"Location:../resource/product_category/index.php");
 
         }
@@ -50,7 +51,7 @@
             $comp_id = $_SESSION['company'];
             $status = SoftDelete::CREATED;
 
-            $query = 'where deleted_at IS NULL';
+            $query = 'where deleted_at IS NULL and company_id = '.$comp_id;
 
 
             $sql = "SELECT * FROM inv_product_category   $query

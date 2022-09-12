@@ -5,7 +5,7 @@
     {
         $action =  isset($_POST['action']) ? $_POST['action'] : null;
 
-        $sql_department = "SELECT f_id FROM departments WHERE f_code='SM'";
+        $sql_department = "SELECT f_id FROM departments WHERE f_code='IV'";
         $result_department = mysqli_query($conn, $sql_department);
         $deparment_id = null;
         $role = 'User';
@@ -23,15 +23,15 @@
 
             if(!$check_employee)
             {
-                $sql = "INSERT into employees (f_first_name,f_last_name,f_com_email,f_department,f_password,f_user_level,f_emp_id,f_company_id,f_contact,f_emp_status,f_created_date,f_modified_date) 
-                values ('$_POST[f_first_name]','$_POST[f_last_name]','$_POST[f_com_email]','$deparment_id','$_POST[f_password]','$_POST[f_user_level]','$_POST[f_emp_id]','$comp_id','$_POST[f_contact]','$f_emp_status',current_timestamp(),current_timestamp())";
+                $sql = "INSERT into employees (f_first_name,f_last_name,f_com_email,f_department,f_designation,f_password,f_user_level,f_emp_id,f_company_id,f_contact,f_emp_status,f_created_date,f_modified_date) 
+                values ('$_POST[f_first_name]','$_POST[f_last_name]','$_POST[f_com_email]','$deparment_id','$_POST[category_id]','$_POST[f_password]','$_POST[f_user_level]','$_POST[f_emp_id]','$comp_id','$_POST[f_contact]','$f_emp_status',current_timestamp(),current_timestamp())";
             }
         }
         elseif($action == 'update')
         {
             $check_employee = checkEmployeeID($_POST['f_emp_id'],$_POST['id']);
 
-            $sql = "UPDATE employees SET f_first_name='$_POST[f_first_name]',f_last_name='$_POST[f_last_name]',f_com_email='$_POST[f_com_email]',f_password='$_POST[f_password]',f_identity='$_POST[f_identity]',f_emp_id='$_POST[f_emp_id]',f_contact='$_POST[f_contact]',f_user_level='$_POST[f_user_level]',f_modified_date=current_timestamp() WHERE f_id='$_POST[id]'";
+            $sql = "UPDATE employees SET f_first_name='$_POST[f_first_name]',f_last_name='$_POST[f_last_name]',f_com_email='$_POST[f_com_email]',f_password='$_POST[f_password]',f_identity='$_POST[f_identity]',f_emp_id='$_POST[f_emp_id]',f_contact='$_POST[f_contact]',f_user_level='$_POST[f_user_level]',f_designation='$_POST[category_id]',f_modified_date=current_timestamp() WHERE f_id='$_POST[id]'";
         }
         elseif($action == 'delete')
         {
@@ -39,7 +39,7 @@
 
             postActionAjax('Sales Account',$sql);
 
-            echo json_encode(['url' => '../sales_account/index.php' , 'status'=>'success']);
+            echo json_encode(['url' => '../inventory_account/index.php' , 'status'=>'success']);
         }
         elseif($action == 'upload_excel'){
 
@@ -83,7 +83,7 @@
         }
         elseif($action != 'delete')
         {
-            postAction('Sales Person',$action,$sql,"Location:../resource/sales_account/index.php");
+            postAction('Stakeholder',$action,$sql,"Location:../resource/inventory_account/index.php");
 
         }
     }
@@ -95,7 +95,7 @@
 
 
         if($id){
-            $sql = "SELECT f_id,f_first_name,f_last_name,f_com_email,f_identity,f_password,f_emp_id,f_contact,f_email,f_user_level FROM employees WHERE f_id=".$id;
+            $sql = "SELECT f_id,f_first_name,f_last_name,f_com_email,f_identity,f_password,f_emp_id,f_contact,f_email,f_user_level,f_designation FROM employees WHERE f_id=".$id;
 
             $result = mysqli_query($conn, $sql);
         }
@@ -103,11 +103,12 @@
         {
             $comp_id = $_SESSION['company'];
 
-            $sql = "SELECT employees.f_first_name,employees.f_last_name,employees.f_modified_date,employees.f_com_email,employees.f_id,employees.f_emp_id,
+            $sql = "SELECT employees.f_first_name,employees.f_last_name,c.name as category_name,employees.f_modified_date,employees.f_com_email,employees.f_id,employees.f_emp_id,
                     employees.f_contact,employees.f_email
                     FROM employees 
                     INNER JOIN departments ON employees.f_department = departments.f_id
-                    where departments.f_code = 'SM' AND employees.f_company_id=".$comp_id."
+                    LEFT JOIN inv_stakeholder_category as c ON employees.f_designation = c.id
+                    where departments.f_code = 'IV' AND employees.f_company_id=".$comp_id."
                     AND employees.f_delete ='N'
                     ORDER BY employees.f_modified_date desc";
 
@@ -122,19 +123,19 @@
                 $name = $row['f_first_name'] .' '. $row['f_last_name'];
                 $created_at = date('d-m-Y H:i',strtotime($row['f_modified_date']));
                 $email = $row['f_com_email'] ;
+                $category_name = $row['category_name'];
 
                 echo '
                 <tr>
-                    <td>'.$x.'</td>
-                    <td>
-                           '.$name .'
-                    </td>
+                    <td>' .$x. '</td>
+                    <td>' .$name . '</td>
                     <td>' .$email. '</td>
+                    <td>' .$category_name. '</td>
                     <td>' .$created_at.'</td>
 
                     <td style="text-align:center">
                         <a class="btn btn-sm btn-warning" href="edit.php?id='.$id.'">Edit</a>
-                        <button class="btn btn-sm btn-danger sales_account_delete" value="'.$id.'">Delete</button>
+                        <button class="btn btn-sm btn-danger inventory_account_delete" value="'.$id.'">Delete</button>
                     </td>
                 </tr>
                 ';

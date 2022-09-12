@@ -7,6 +7,7 @@
 
         if($action == 'create')
         {
+            $emp_id = $_SESSION['emp_id'];
 
             if(isset($_FILES['attachment'])){
                 $attachment = $_FILES['attachment'];
@@ -26,7 +27,7 @@
             }
 
             $sql = "INSERT INTO inv_stock_in (stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
-            VALUES ('$_POST[stakeholder_id]','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
+            VALUES ('$emp_id','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
 
             $result = $conn->query($sql);
 
@@ -47,7 +48,7 @@
                 $result = $conn->query($sql_product);
 
             }
-    // exit();
+    
             $sql = null;
         }
         elseif($action == 'update')
@@ -101,7 +102,7 @@
             
             $sql = "UPDATE inv_stock_in  SET deleted_at=current_timestamp() where id='$_POST[id]'";
 
-            postActionAjax('Stock In',$sql);
+            postActionAjax('Stock Out',$sql);
 
             $sql_stock_in_product = "SELECT * FROM inv_stock_in_product WHERE stock_in_id='$_POST[id]' and deleted_at is null";
             $result_stock_in_product = mysqli_query($conn, $sql_stock_in_product);
@@ -112,12 +113,12 @@
                 postActionAjax('Stock Out',$sql_update_stock_in_product);
             }
 
-            echo json_encode(['url' => '../stock_in/index.php' , 'status'=>'success']);
+            echo json_encode(['url' => '../stock_out_supplier/index.php' , 'status'=>'success']);
 
             exit();
         }
         
-        postAction('Stock In',$action,$sql,"Location:../resource/stock_in/index.php");
+        postAction('Stock Out',$action,$sql,"Location:../resource/stock_out_supplier/index.php");
     }
     else
     {
@@ -142,14 +143,28 @@
         elseif($action == 'list')
         {
             $comp_id = $_SESSION['company'];
+            $emp_id = $_SESSION['emp_id'];
 
-            $sql = "SELECT a.id , a.quantity as quantity, b.name as name, b.low_quantity_alert as low_quantity_alert, c.name as category_name
-                    FROM inv_available_stock a 
-                    LEFT JOIN inv_product b ON a.product_id = b.id 
-                    LEFT JOIN inv_product_category c on b.product_category_id = c.id
-                    WHERE b.company_id = '$comp_id'
-                    ORDER BY b.name desc";
+            $query =  ' where a.deleted_at IS NULL AND a.stakeholder_id = '.$emp_id;
 
+            if(isset($_GET["month"]) ? $_GET["month"] : null ){
+                $query = $query." AND MONTH(a.created_at) = ".$_GET['month'];
+            }
+
+            if(isset($_GET["year"]) ? $_GET["year"] : null ){
+                $query = $query." AND YEAR(a.created_at) = ".$_GET['year'];
+            }
+
+            if(isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null ){
+                $query = $query." AND a.stakeholder_id = ".$_GET['stakeholder'];
+            }
+
+            $sql = "SELECT a.id , a.reference_number as reference_number, a.status as status,a.created_at as created_at, b.f_first_name as stakeholder_name 
+                    FROM inv_stock_in a 
+                    LEFT JOIN employees b ON a.stakeholder_id = b.f_id 
+                    $query
+                    ORDER BY a.created_at desc";
+            
             $result = mysqli_query($conn, $sql);
 
             $x = 0;
@@ -158,35 +173,120 @@
                 
                 $x += 1;
                 $id = $row['id'];
-                $quantity = $row['quantity'];
-                $name = $row['name'];
-                $category_name = $row['category_name'];
+                $stakeholder_name = $row['stakeholder_name'];
+                $reference_number = $row['reference_number'];
+                $date_created = isset($row['created_at']) ? date('d-m-Y H:i',strtotime($row['created_at'])) : null ;
 
-                $checkRow = checkQuantityAlert($row['quantity'], $row['low_quantity_alert']);
-
-                if($checkRow){
+                if($row['status'] == '0'){
+                    $status = 'Open';
+                }else{
+                    $status = 'Validated';
+                }
+                if($row['status'] == '0'){
                     echo '
-                    <tr bgcolor= "red">
-                        <td>' .$x. ' </td>
-                        <td>' .$name. '</td>
-                        <td>' .$category_name. '</td>
-                        <td>' .$quantity.'&nbsp;&nbsp;'.checkQuantityAlert($row['quantity'], $row['low_quantity_alert']).'</td>
+                    <tr>
+                        <td>'.$x.'</td>
+                        <td>' .$stakeholder_name. '</td>
+                        <td>' .$reference_number.'</td>
+                        <td>' .$status.'</td>
+                        <td>' .$date_created.'</td>
+
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-warning" href="edit.php?id='.$id.'">Edit</a>
+                            <button class="btn btn-sm btn-danger stock_out_supplier_delete" value="'.$id.'">Delete</button>
+                        </td>
                     </tr>
                     ';
                 }else{
                     echo '
                     <tr>
-                        <td>' .$x. ' </td>
-                        <td>' .$name. '</td>
-                        <td>' .$category_name. '</td>
-                        <td>' .$quantity.' </td>
+                        <td>'.$x.'</td>
+                        <td>' .$stakeholder_name. '</td>
+                        <td>' .$reference_number.'</td>
+                        <td>' .$status.'</td>
+                        <td>' .$date_created.'</td>
+
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-warning" href="view.php?id='.$id.'">View</a>
+                        </td>
                     </tr>
                     ';
                 }
-                
             }
+        }elseif($action == 'export'){
+
+            $query =  ' where a.deleted_at IS NULL AND c.deleted_at IS NULL';
+
+            $month = isset($_GET["month"]) ? $_GET["month"] : null;
+
+            $stakeholder = isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null;
+        
+            if(isset($_GET["month"]) ? $_GET["month"] : null ){
+                $query = $query." AND MONTH(a.created_at) = ".$_GET['month'];
+            }
+
+            if(isset($_GET["year"]) ? $_GET["year"] : null ){
+                $query = $query." AND YEAR(a.created_at) = ".$_GET['year'];
+            }
+
+            if(isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null ){
+                $query = $query." AND a.stakeholder_id = ".$_GET['stakeholder'];
+            }
+            
+            $filename = date("Y-m-d")."-stock_in.csv";
+
+            header('Content-Type: text/csv; charset=utf-8');  
+            header("Content-Disposition: attachment;  filename=\"$filename\""); 
+            $output = fopen("php://output", "w");  
+            fputcsv($output, array('Stakeholder', 'Reference Number', 'Date', 'Remark','Product Name','Quantity','Price per unit (RM)','Total (RM)','Status'));
+
+              
+            $query = "SELECT b.name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.buy_price, SUM(c.quantity * d.buy_price) AS total, e.name
+            from inv_stock_in AS a
+            LEFT JOIN inv_contact AS b ON a.stakeholder_id = b.id
+            LEFT JOIN inv_stock_in_product AS c ON a.id = c.stock_in_id
+            LEFT JOIN inv_product AS d ON c.product_id = d.id
+            LEFT JOIN inv_status as e ON a.status = e.id
+            $query
+            GROUP BY b.name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.buy_price, e.name";  
+    
+
+            $result = $conn->query($query);
+            
+            while($row = mysqli_fetch_assoc($result))  
+            {  
+                fputcsv($output, $row);  
+            }  
+            fclose($output);  
+
         }
     }
+
+    if(isset($_GET["export"])){
+        $filename = date("Y-m-d")."-stock_in.csv";
+
+        header('Content-Type: text/csv; charset=utf-8');  
+        header("Content-Disposition: attachment;  filename=\"$filename\""); 
+        $output = fopen("php://output", "w");  
+
+        fputcsv($output, array('Stakeholder', 'Reference Number', 'Date', 'Remark','Product Name','Quantity'));
+
+        $query = "SELECT b.name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity 
+        from inv_stock_in AS a
+        LEFT JOIN inv_contact AS b ON a.stakeholder_id = b.id
+        LEFT JOIN inv_stock_in_product AS c ON a.id = c.stock_in_id
+        LEFT JOIN inv_product AS d ON c.product_id = d.id
+        WHERE a.deleted_at IS null
+        AND a.status = 1";  
+
+        $result = $conn->query($query);
+        
+        while($row = mysqli_fetch_assoc($result))  
+        {  
+             fputcsv($output, $row);  
+        }  
+        fclose($output);  
+   }  
 
     if (isset($_GET['deleteProduct'])) {
         $id = $_GET['deleteProduct'];
@@ -201,10 +301,12 @@
 
     if($action == 'delete')
         {
-            $sql = "UPDATE inv_stock_in  SET deleted_at=current_timestamp() where id='$_POST[id]'";
-            postActionAjax('Stock In',$sql);
 
-            echo json_encode(['url' => '../stock_in/index.php' , 'status'=>'success']);
+            $sql = "UPDATE inv_stock_in  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+            
+            postActionAjax('Stock Out',$sql);
+
+            echo json_encode(['url' => '../stock_out_supplier/index.php' , 'status'=>'success']);
         }
 
     if (isset($_GET['validate'])) {
@@ -238,24 +340,8 @@
         }
         $sql = null;
         $action = 'validate';
-        postAction('Stock In',$action,$sql,"Location:../resource/stock_in/index.php");
+        postAction('Stock Out',$action,$sql,"Location:../resource/stock_out_supplier/index.php");
             
-    }
-
-    function checkQuantityAlert($quantity, $low_quantity_alert){
-        if($quantity == 0) return 0;
-
-        if($quantity <= $low_quantity_alert){
-            return '<i class="fas fa-exclamation-circle blink" style="color:red"></i>';
-        }
-    }
-
-    function checkRow($quantity, $low_quantity_alert){
-        if($quantity == 0) return 0;
-
-        if($quantity <= $low_quantity_alert){
-            return true;
-        }
     }
 
     function mimeType($file_type)
