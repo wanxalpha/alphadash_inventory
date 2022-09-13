@@ -8,7 +8,7 @@
         $sql_department = "SELECT f_id FROM departments WHERE f_code='IV'";
         $result_department = mysqli_query($conn, $sql_department);
         $deparment_id = null;
-        $role = 'User';
+        $role = 'Admin';
         $check_employee = null;
 
         while ($row = mysqli_fetch_array($result_department)) {
@@ -24,7 +24,7 @@
             if(!$check_employee)
             {
                 $sql = "INSERT into employees (f_first_name,f_last_name,f_com_email,f_department,f_designation,f_password,f_user_level,f_emp_id,f_company_id,f_contact,f_emp_status,f_created_date,f_modified_date) 
-                values ('$_POST[f_first_name]','$_POST[f_last_name]','$_POST[f_com_email]','$deparment_id','$_POST[category_id]','$_POST[f_password]','$_POST[f_user_level]','$_POST[f_emp_id]','$comp_id','$_POST[f_contact]','$f_emp_status',current_timestamp(),current_timestamp())";
+                values ('$_POST[f_first_name]','$_POST[f_last_name]','$_POST[f_com_email]','$deparment_id','$_POST[category_id]','$_POST[f_password]','$role','$_POST[f_emp_id]','$comp_id','$_POST[f_contact]','$f_emp_status',current_timestamp(),current_timestamp())";
             }
         }
         elseif($action == 'update')

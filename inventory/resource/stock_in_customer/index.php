@@ -1,14 +1,13 @@
 <?php
-    include_once('../../controller/stock_out_supplier.php');
+    include_once('../../controller/stock_in_customer.php');
     include_once("../../layouts/menu.php"); 
 
-    $stakeholder = getSupplier();
+    $stakeholder = getCustomer();
 ?>
 
 <div class="content-wrapper">
   <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4">Stock Out</h4>
-
+    <h4 class="fw-bold py-3 mb-4">Stock In Customer</h4>
     <div class="row mb-12">
       <div class="col-md-2">
         <label class="form-label">Month</label>
@@ -34,7 +33,21 @@
           </option>
           <?php } ?>
         </select>
-      </div>  
+      </div>
+
+      <!-- <div class="col-md-2">
+        <label class="form-label">Stakeholder</label>
+        <select name="filter_stakeholder" id="filter_stakeholder" class="select2 form-select" required>
+          <option hidden value="">Select Stakeholder</option>
+          <?php  
+              $get_status_stakeholder = isset($_GET['stakeholder']) ? $_GET['stakeholder'] : null ;
+          ?>
+          <?php foreach($stakeholder as $idx => $sh) { ?>
+          <option value="<?php echo $sh['id']?>" <?php if($get_status_stakeholder == $sh['id']) echo 'selected'; ?>>
+            <?php echo $sh['name'] ?> </option>
+          <?php } ?>
+        </select>
+      </div> -->
 
       <div class="col-md-2">
         <label class="form-label"> </label>
@@ -43,11 +56,10 @@
       <div class="col-md-6" align='right'>
       <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
         &nbsp;
-        <a href="../stock_out_supplier/create.php" class="btn btn-primary">Add Stock Out</a>  
+        <a href="../stock_in_customer/create.php" class="btn btn-primary">Add Stock Out</a>  
       </div>
     </div>
-
-<br>
+    <br>
     <div class="row">
       <div class="col-md-12">
         <div class="card">
@@ -63,7 +75,7 @@
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
-              <tbody class="table-border-bottom-0" id="index_stock_out_supplier">
+              <tbody class="table-border-bottom-0" id="index_stock_in_customer">
               </tbody>
             </table>
           </div>
@@ -75,4 +87,4 @@
 
 <?php include_once("../../layouts/footer.php"); ?>
 
-<script type="text/javascript" src="../../assets/js/resource/stock_out_supplier.js"> </script>
+<script type="text/javascript" src="../../assets/js/resource/stock_in_customer.js"> </script>

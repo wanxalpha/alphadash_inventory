@@ -142,13 +142,8 @@ var options_sales_funnel_category = {
       type: 'polarArea',
       events: {
           dataPointSelection: function (event, chartContext, config) {
-              // console.log('seriesIndex', config.seriesIndex);
-              // console.log('dataPointIndex', config.dataPointIndex);
-
               var category_month = $('#category_month').val();
               var category_year = $('#category_year').val();
-              // var category_category = $('#category_category').val();
-
               var category = (config.dataPointIndex + 1);
 
               window.open('../sales_funnel?year='+category_year+'&month='+category_month+'&category='+category, '_blank');

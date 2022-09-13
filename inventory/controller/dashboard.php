@@ -4,47 +4,33 @@
     include_once('Lookup/ProjectSector.php');
     include_once('Lookup/SoftDelete.php');
 
-    
-    $action =  isset($_GET['action']) ? $_GET['action'] : null;
-    if($action == 'calender'){
-        $id = trim($_GET["id"]);
 
-
-        $sql = "SELECT * FROM sales_appointment WHERE id='$id'";
-        $result = mysqli_query($conn, $sql);
-        $num_rows = mysqli_num_rows($result);
-
-        if ($num_rows>0) {
-            while ($row = mysqli_fetch_array($result)) { 
-                
-                $data = [
-                    'company_name' => $row['company_name'],
-                    'pic_name' => $row['pic_name'],
-                    'pic_position' => $row['pic_position'],
-                    'pic_mobile' => $row['pic_mobile'],
-                    'pic_email' => $row['pic_email'],
-                    'remark' => $row['remark'],
-                    'appointment_date' => date('d-m-Y',strtotime($row['appointment_date']))
-                ];
-            }
-            echo json_encode($data) ;
-        }
-        else{
-            return null;
-        }
-    }
-    else{
         $data_kpi = getKPISalesPerson();
         $data_team_kpi = getKPISalesTeam();
         $data_funnel_status = getStatusFunnel();
         $data_funnel_category = getCategoryFunnel();
         $data_pillar = calculatePillar();
         $data_pillar_increase = calculatePillar(true);
-
         $data_calendar = Calendar();
-    }
 
-    
+        $purchase_details = purchaseDetails();
+
+    function purchaseDetails(){
+        global $conn;
+        $comp_id = $_SESSION['company'];
+
+        $query = "SELECT a.id,b.f_first_name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.sales_price, d.buy_price
+        from inv_stock_out AS a
+        LEFT JOIN employees AS b ON a.stakeholder_id = b.f_id
+        LEFT JOIN inv_stock_out_product AS c ON a.id = c.stock_out_id
+        LEFT JOIN inv_product AS d ON c.product_id = d.id
+        where a.deleted_at IS NULL AND c.deleted_at IS NULL AND a.status = 1 and a.company_id = '$comp_id'
+        GROUP BY a.id,b.f_first_name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.sales_price, d.buy_price"; 
+
+        $result = mysqli_query($conn, $query);
+
+        return $result;
+    }
 
     function calculatePillar($increase = false){
         global $conn;

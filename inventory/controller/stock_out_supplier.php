@@ -7,6 +7,7 @@
 
         if($action == 'create')
         {
+            $comp_id = $_SESSION['company'];
             $emp_id = $_SESSION['emp_id'];
 
             if(isset($_FILES['attachment'])){
@@ -26,8 +27,8 @@
                 $timestamp = date('Y-m-d H:i:s');
             }
 
-            $sql = "INSERT INTO inv_stock_in (stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
-            VALUES ('$emp_id','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
+            $sql = "INSERT INTO inv_stock_in (company_id,stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
+            VALUES ('$comp_id','$emp_id','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
 
             $result = $conn->query($sql);
 
@@ -145,7 +146,7 @@
             $comp_id = $_SESSION['company'];
             $emp_id = $_SESSION['emp_id'];
 
-            $query =  ' where a.deleted_at IS NULL AND a.stakeholder_id = '.$emp_id;
+            $query =  " where a.deleted_at IS NULL AND a.stakeholder_id = '$emp_id' and company_id = '$comp_id'";
 
             if(isset($_GET["month"]) ? $_GET["month"] : null ){
                 $query = $query." AND MONTH(a.created_at) = ".$_GET['month'];

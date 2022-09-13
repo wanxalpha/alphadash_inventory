@@ -76,7 +76,6 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                         <i class="bx bx-chevron-left bx-sm align-middle"></i>
                     </a>
                 </div>
-
                 <div class="profile-card">
                     <div class="profile-image">
                         <img alt="" src="../../../../<?php echo $file_role ?>/upload/profile/<?php echo $emp_pic ?>" style="border-radius:100%; height:100px; width:100px;">
@@ -145,13 +144,6 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                             </a>
                         </li>
 
-                        <!-- <li class="menu-item">
-                            <a href="../contact/index.php" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
-                                <div data-i18n="Documentation">Stakeholders</div>
-                            </a>
-                        </li> -->
-
                         <li class="menu-item">
                             <a href="../inventory_account/index.php" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
@@ -186,7 +178,7 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                             </ul>
                         </li>
                     <?php } elseif ($_SESSION['designation'] == '3') {?>
-
+                    <!-- supplier -->
                         <li class="menu-item">
                             <a href="../stock_out_supplier/index.php" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
@@ -200,7 +192,16 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                                 <div data-i18n="Documentation">Stock Return</div>
                             </a>
                         </li>
+                    <?php } elseif ($_SESSION['designation'] == '2') {?>
+                    <!-- customer -->
+                        <li class="menu-item">
+                            <a href="../stock_in_customer/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Stock In</div>
+                            </a>
+                        </li>
                     <?php } ?>
+
                     <!-- Misc -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
                     <!-- <li class="menu-item">

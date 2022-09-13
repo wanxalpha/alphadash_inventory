@@ -95,7 +95,7 @@ function getSalesPerson(){
 
 function getProductCategory(){
     global $conn;
-    // $comp_id = $_SESSION['company'];
+    $comp_id = $_SESSION['company'];
 
     $sql = "SELECT id,name 
             FROM inv_product_category 

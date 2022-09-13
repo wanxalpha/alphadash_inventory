@@ -31,7 +31,7 @@ if (isset($_POST['login'])) {
     $emp_level = $row['f_user_level'];
     $company_id = $row['f_company_id'];
     $designation = $row['f_designation'];
-
+    
     if($row['f_department'] == '41'){
       $sql_designation = "SELECT * 
                   FROM inv_stakeholder_category 

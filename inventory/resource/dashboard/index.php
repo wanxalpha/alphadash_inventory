@@ -8,7 +8,7 @@
 
   $test = date('F', strtotime('01'));
   $test1 = date('M', strtotime('01'));
-
+  
 ?>
 
 <!-- / Navbar -->
@@ -21,11 +21,11 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
 
-            <div class="col-md-6 mb-4">
+            <div class="col-md-12 mb-4">
                 <div class="card mb-3 overflow-hidden h-100">
-                    <h5 class="card-header2" style="text-align: center;">Available Stock</h5>
+                    <h5 class="card-header2" style="text-align: center;">Purchase Details</h5>
                     <div class="card-body">
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-4">
                                 <label class="form-label">Year</label>
                                 <?php $demand_less_year = isset($_GET['demand_less_year']) ? $_GET['demand_less_year'] : date('Y') ; ?>
@@ -47,8 +47,35 @@
                                     <?php } ?>
                                 </select>
                             </div>
+                        </div> -->
+                        <div class="px-2">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td>No</td>
+                                        <td>Stakeholder</td>
+                                        <td>Product Name</td>
+                                        <td>Quantity</td>
+                                        <td>Purchase Price</td>
+                                        <td>Sales Price</td>
+                                        <td>Date</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $idx = 0; while($product = $purchase_details->fetch_assoc()) {  $idx += 1;?>
+                                        <tr>
+                                            <td><?php echo $idx ?> .</td>
+                                            <td><?php echo ($product['stakeholder_name']) ?></td>
+                                            <td><?php echo ($product['product_name']) ?></td>
+                                            <td><?php echo ($product['quantity']) ?></td>
+                                            <td><?php echo ($product['buy_price']) ?></td>
+                                            <td><?php echo ($product['sales_price']) ?></td>
+                                            <td><?php echo ($product['date']) ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
                         </div>
-                        <div id="sales_marketing_demand" class="px-2"></div>
                     </div>
 
                 </div>

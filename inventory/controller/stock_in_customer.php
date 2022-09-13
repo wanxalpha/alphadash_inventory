@@ -157,8 +157,9 @@
         elseif($action == 'list')
         {
             $comp_id = $_SESSION['company'];
+            $emp_id = $_SESSION['emp_id'];
 
-            $query =  " where a.deleted_at IS NULL and company_id = '$comp_id'";
+            $query =  " where a.deleted_at IS NULL and company_id = '$comp_id' and stakeholder_id = '$emp_id'";
 
             if(isset($_GET["month"]) ? $_GET["month"] : null ){
                 $query = $query." AND MONTH(a.created_at) = ".$_GET['month'];
