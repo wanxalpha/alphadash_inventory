@@ -3,7 +3,7 @@
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
-    $stakeholder = getCustomer();
+    $stakeholder = getRetailer();
 ?>
 
 <!-- Content wrapper -->
@@ -240,7 +240,7 @@
         $(".quantity").change(function() { 
             console.log($(this).val());
             
-            var current_quantity = $('.temp_quantity').val();
+            var current_quantity = parseInt($('.temp_quantity').val());
 
             if($(this).val() > current_quantity){
                 $('.quantity').val("");

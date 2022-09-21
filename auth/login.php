@@ -1,24 +1,37 @@
 <?php
 session_start();
+ob_start();
 // error_reporting(0);
 include_once("config.php");
 
-mysqli_set_charset($conn, "utf8");
-
-date_default_timezone_set("Asia/Kuala_Lumpur");
-$t = time();
-$now = date("Y-m-d H:i:s", $t);
-$curtime = date("H:i", $t);
-$curdate = date("Y-m-d", $t);
-$year = date("Y", $t);
-$hour = date("H", $t);
-$minute = date("i", $t);
-
-if (isset($_POST['login'])) {
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $username = htmlspecialchars($_POST['username']);
   $password = htmlspecialchars($_POST['password']);
 
+  login($username,$password); 
+}
+else{
+  if(isset($_GET['password']) && isset($_GET['username'])){
+
+    $username = htmlspecialchars($_GET['username']);
+    $password = htmlspecialchars($_GET['password']);
+
+    login($username,$password);
+  }
+}
+
+function login($username,$password){
+  global $conn;
+  mysqli_set_charset($conn, "utf8");
+
+  date_default_timezone_set("Asia/Kuala_Lumpur");
+  $t = time();
+  $now = date("Y-m-d H:i:s", $t);
+  $curtime = date("H:i", $t);
+  $curdate = date("Y-m-d", $t);
+  $year = date("Y", $t);
+  $hour = date("H", $t);
+  $minute = date("i", $t);
   $query = "SELECT * FROM employees WHERE f_com_email='$username' AND f_password='$password' AND f_delete='N'";
   // echo $query; exit;
   $result = mysqli_query($conn, $query);
@@ -41,14 +54,12 @@ if (isset($_POST['login'])) {
     $row_designation = mysqli_fetch_array($result_designation);
 
     }
-
-    $designation_name = $row_designation['name'];
     
-    $sql = "INSERT INTO login_time (f_emp_id, f_clock_in, f_created_date, f_modified_date) VALUES ('$emp_id', '$curtime', '$now', '$now')";
+    $designation_name = $row_designation['name'];
 
+    $sql = "INSERT INTO login_time (f_emp_id, f_clock_in, f_created_date, f_modified_date) VALUES ('$emp_id', '$curtime', '$now', '$now')";
     $result = mysqli_query($conn, $sql);
 
-    // $_SESSION['member_id'] = $member_id;
     $_SESSION['userlogin'] = $username;
     $_SESSION['emp_id'] = $emp_id;
     $_SESSION['role'] = $emp_level;
@@ -61,25 +72,15 @@ if (isset($_POST['login'])) {
       $_SESSION['designation_name'] = '';
     }
 
-
-    // if($emp_level == "Admin" || $emp_level == "Master"){
-    //   // echo "ok1"; exit;
-    //   header('Location:../admin/dashboard/dashboard-a.php');
-    // }else{
-    //   // echo "ok2"; exit;
-    //   header('Location:../user/dashboard/dashboard-u.php');
-    // }
-
     header('Location:../inventory/resource/dashboard/index.php');
-
-    
     
   } else {
 
+   
     echo '
 			<script>
 				alert("Incorrect Username or Password");
-				window.location = "";
+				window.location.href = "../auth/login.php";
 			</script>
 			';
   }
@@ -142,10 +143,10 @@ if (isset($_POST['login'])) {
               </div>
               <!-- /Logo -->
 
-              <form class="mb-3" action="" method="POST">
+              <form class="mb-3" action="" method="POST" id="form_login">
                 <div class="mb-3">
                   <label for="email" class="form-label">User Email</label>
-                  <input type="text" class="form-control" name="username" placeholder="Email" />
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Email" />
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <div class="d-flex justify-content-between">
@@ -155,7 +156,7 @@ if (isset($_POST['login'])) {
                     </a>
                   </div>
                   <div class="input-group input-group-merge">
-                    <input type="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"/>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"/>
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
                 </div>
@@ -180,6 +181,8 @@ if (isset($_POST['login'])) {
     </div>
   </div>
 
+ 
+
   <!-- / Content -->
 
   <!-- Core JS -->
@@ -201,6 +204,26 @@ if (isset($_POST['login'])) {
 
   <!-- Place this tag in your head or just before your close body tag. -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
+ 
+  
+  <script>
+    autoLogin();
+
+    function autoLogin(){
+      var password = "<?php echo isset($_GET['password']) ? $_GET['password'] : null ?>";
+      var username = "<?php echo isset($_GET['username']) ? $_GET['username'] : null ?>";
+
+      if(username && password){
+        $('#password').val(password);
+        $('#username').val(username);
+
+      
+        $('#form_login').submit();
+      }
+    }
+
+  </script>
+
 </body>
 
 </html>

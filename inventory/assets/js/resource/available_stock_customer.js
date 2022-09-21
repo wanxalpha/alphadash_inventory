@@ -1,8 +1,8 @@
 
 
-var url = "../../controller/contact.php";
+var url = "../../controller/available_stock_customer.php";
 
-$(document).on('click', ".contact_delete", function (e) {
+$(document).on('click', ".stock_in_delete", function (e) {
     // alert($(this).val());
     var json ={
         id :$(this).val() ,
@@ -18,11 +18,11 @@ $.get(url, {
     .done(function (data) {
 
         if (data) {
-            $('#index_contact').html(data);
+            $('#index_available_stock_customer').html(data);
 
         } else {
 
-            $('#index_contact').html('<tr><td rowspan="4">No Data</td></tr>')
+            $('#index_available_stock_customer').html('<tr><td rowspan="4">No Data</td></tr>')
 
         }
     })
@@ -34,7 +34,7 @@ $("#btn_search").click(function(){
 });
 
 function search(){
-    var url = "../../controller/product.php";
+    var url = "../../controller/stock_in.php";
     var category = $('#Category').val();
     
 
@@ -46,10 +46,10 @@ function search(){
     .done(function (data) {
 
         if (data) {
-            $('#index_product_sector').html(data);
+            $('#index_stock_in_sector').html(data);
 
         } else {
-            $('#index_product_sector').html('<tr><td rowspan="5">No Data</td></tr>')
+            $('#index_stock_in_sector').html('<tr><td rowspan="5">No Data</td></tr>')
         }
     })
 }

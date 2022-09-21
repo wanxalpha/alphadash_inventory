@@ -129,7 +129,7 @@ function getSupplier(){
 
 }
 
-function getCustomer(){
+function getRetailer(){
     global $conn;
     $comp_id = $_SESSION['company'];
 
@@ -141,13 +141,27 @@ function getCustomer(){
 
 }
 
+function getCustomer(){
+    global $conn;
+    $comp_id = $_SESSION['company'];
+    $emp_id = $_SESSION['emp_id'];
+
+    $sql = "SELECT id as id,name
+            FROM inv_customer
+            where company_id = '$comp_id' and retailer_id = '$emp_id' and deleted_at IS NULL";
+
+    return $result_stakeholder = mysqli_query($conn, $sql);
+
+}
+
 function getStakeholderCategory(){
     global $conn;
     // $comp_id = $_SESSION['company'];
 
     $sql = "SELECT id,name 
             FROM inv_stakeholder_category 
-            where deleted_at IS NULL";
+            WHERE deleted_at IS NULL
+            AND id NOT IN (5,4)";
 
     return $result_stakeholder_category = mysqli_query($conn, $sql);
 

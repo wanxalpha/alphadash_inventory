@@ -1,5 +1,5 @@
 <?php
-    include_once('../../controller/stock_out.php');
+    include_once('../../controller/stock_in_customer.php');
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
@@ -19,26 +19,13 @@
                     <h5 class="card-header2">Edit Stock Out</h5>
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/stock_out.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/stock_in_customer.php" enctype="multipart/form-data">
                             <?php  while($row = $result->fetch_assoc()) { ?>
 
                                 <input class="form-control" type="hidden" name="current_attachment" id="current_attachment" required value="<?php echo $row['attachment']?>"/>
                                 <input type="hidden" name="id" value="<?php echo $row['id'] ?>">
 
-                                <div class="row">
-                                    <div class="mb-3 col-md-3">
-                                        <label for="name" class="form-label">Stakeholder</label>
-                                        <select name="stakeholder_id" id="stakeholder_id" class="select2 form-select" required>
-                                            <option hidden value=""> ---- Select Stakeholder ----</option>
-                                            <?php while ($cat = mysqli_fetch_array($stakeholder)) { ?>
-                                                <option value="<?php echo $cat['id'] ?>" 
-                                                <?php echo ($row['stakeholder_id'] ==  $cat['id']) ? ' selected="selected"' : '';?>> 
-                                                    <?php echo $cat['name'] ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                
+                                <div class="row">                                
                                     <div class="mb-3 col-md-3">
                                         <label for="reference_number" class="form-label">Referance Number</label>
                                         <input class="form-control" type="text" name="reference_number" id="reference_number" required value="<?php echo $row['reference_number']?>"/>
@@ -63,7 +50,7 @@
                                         </a>
                                     </div>
                                 
-                                    <div class="mb-6 col-md-6">
+                                    <div class="mb-6 col-md-3">
                                         <label for="remark" class="form-label">Remark</label>
                                         <textarea type="text" class="form-control" id="remark" name="remark"><?php echo $row['remark']?></textarea>
                                     </div>
@@ -133,7 +120,7 @@
                                                             <td><?php echo ($product['product_name']) ?></td>
                                                             <td><?php echo ($product['quantity']) ?></td>
                                                             <td>
-                                                            <a href="../../controller/stock_out.php?deleteProduct=<?php echo $product['id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                                            <a href="../../controller/stock_in_customer.php?deleteProduct=<?php echo $product['id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i></a>
                                                         </td>
                                                         </tr>
                                                     <?php } ?>
@@ -152,10 +139,10 @@
                                     <button type="submit" name="action" value="update"
                                         class="btn btn-primary me-2 float-right">Submit</button>
                                     <?php if($_SESSION['role'] == 'Master'){ ?>
-                                    <!-- <button onClick="../../controller/stock_out.php?validate=<?php echo $row['id']; ?>"
+                                    <!-- <button onClick="../../controller/stock_in_customer.php?validate=<?php echo $row['id']; ?>"
                                         class="btn btn-warning me-2 float-right">Validate</button> -->
                                         
-                                        <a class="btn btn-warning me-2 float-right" href="../../controller/stock_out.php?validate=<?php echo $row['id']; ?>">Validate</a>
+                                        <a class="btn btn-warning me-2 float-right" href="../../controller/stock_in_customer.php?validate=<?php echo $row['id']; ?>">Validate</a>
                                     <?php } ?>
                                 </div>
                             <?php } ?>
@@ -188,7 +175,7 @@
                 $('.checkProduct').on('change',function(){
 
                     var value = $(this).val();
-                    var url = "../../controller/stock_out.php";
+                    var url = "../../controller/stock_in_customer.php";
 
                     $.get(url, {
                         action: 'stock-available',
@@ -257,7 +244,7 @@
         $('.checkProduct').on('change',function(){
             console.log('asf');
             var value = $(this).val();
-            var url = "../../controller/stock_out.php";
+            var url = "../../controller/stock_in_customer.php";
 
             $.get(url, {
                 action: 'stock-available',

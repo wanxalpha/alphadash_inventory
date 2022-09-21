@@ -7,7 +7,6 @@
 
         if($action == 'create')
         {
-            $emp_id = $_SESSION['emp_id'];
             $comp_id = $_SESSION['company'];
 
             if(isset($_FILES['attachment'])){
@@ -27,9 +26,9 @@
                 $timestamp = date('Y-m-d H:i:s');
             }
 
-            $sql = "INSERT INTO inv_stock_in_customer (company_id,stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
-            VALUES ('$comp_id', '$emp_id','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
-
+            $sql = "INSERT INTO inv_stock_out_customer (company_id,stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
+            VALUES ('$comp_id', '$_POST[stakeholder_id]','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
+// echo($sql);exit();
             $result = $conn->query($sql);
 
             $lastInsert = $conn->insert_id;
@@ -40,12 +39,14 @@
 
                 $product_id = $product['product_id'];
                 $quantity = $product['quantity'];
+                // $expired_date = $product['expired_date'];
                 
-                $sql_product = "INSERT INTO inv_stock_in_product_customer (stock_in_customer_id,product_id,quantity,created_by,created_at) 
+                $sql_product = "INSERT INTO inv_stock_out_product_customer (stock_out_id,product_id,quantity,created_by,created_at) 
                 VALUES ('$lastInsert','$product_id','$quantity',$emp_id,current_timestamp())";
 
                 $result = $conn->query($sql_product);
                 echo($result);
+                // exit();
             }
     
             $sql = null;
@@ -55,7 +56,7 @@
             $emp_id = $_SESSION['emp_id'];
 
             if(isset($_FILES['attachment'])){
-                echo('masuk a');
+
                 $attachment = $_FILES['attachment'];
                 
                 $fileTmpPath = $attachment['tmp_name'];
@@ -74,7 +75,7 @@
                 $path_location = $_POST['attachment'];
             }
 
-            $sql = "UPDATE inv_stock_in_customer SET stakeholder_id='$_POST[stakeholder_id]',reference_number='$_POST[reference_number]',date='$_POST[date]',remark='$_POST[remark]',attachment='$path_location',
+            $sql = "UPDATE inv_stock_out_customer SET stakeholder_id='$_POST[stakeholder_id]',reference_number='$_POST[reference_number]',date='$_POST[date]',remark='$_POST[remark]',attachment='$path_location',
                     updated_at=current_timestamp(),updated_by='$emp_id'
                     WHERE id='$_POST[id]'";
 
@@ -87,67 +88,66 @@
                 $product_id = $product['product_id'];
                 $quantity = $product['quantity'];
 
-                $sql_product = "INSERT INTO inv_stock_in_product_customer (stock_out_id,product_id,quantity,created_by,created_at) 
+                $sql_product = "INSERT INTO inv_stock_out_product_customer (stock_out_id,product_id,quantity,created_by,created_at) 
                 VALUES ('$_POST[id]','$product_id','$quantity',$emp_id,current_timestamp())";
 
                 $result = $conn->query($sql_product);
 
-                $sql_available_stock = "SELECT * FROM inv_available_stock where product_id='$product_id'";
-                $result_available_stock = mysqli_query($conn, $sql_available_stock);
-                $stock = $result_available_stock->fetch_assoc();
+                // $sql_available_stock = "SELECT * FROM inv_available_stock where product_id='$product_id'";
+                // $result_available_stock = mysqli_query($conn, $sql_available_stock);
+                // $stock = $result_available_stock->fetch_assoc();
                 
-                if($stock['product_id']){
-                    $available_quantity = $stock['quantity'] + $quantity;
+                // if($stock['product_id']){
+                //     $available_quantity = $stock['quantity'] + $quantity;
 
-                    $sql_update_available_stock = "UPDATE inv_available_stock  SET quantity='$available_quantity' WHERE product_id='$product_id'";
+                //     $sql_update_available_stock = "UPDATE inv_available_stock  SET quantity='$available_quantity' WHERE product_id='$product_id'";
 
-                    $result = $conn->query($sql_update_available_stock);
-                }else{
-                    $sql_add_available_stock = "INSERT INTO inv_available_stock (product_id,quantity) 
-                    VALUES ('$product_id','$quantity')";
+                //     $result = $conn->query($sql_update_available_stock);
+                // }else{
+                //     $sql_add_available_stock = "INSERT INTO inv_available_stock (product_id,quantity) 
+                //     VALUES ('$product_id','$quantity')";
 
-                    $result = $conn->query($sql_add_available_stock);
-                }
+                //     $result = $conn->query($sql_add_available_stock);
+                // }
             }
         }
         elseif($action == 'delete')
         {
             
-            $sql = "UPDATE inv_stock_in_customer  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+            $sql = "UPDATE inv_stock_out_customer  SET deleted_at=current_timestamp() where id='$_POST[id]'";
 
             postActionAjax('Stock Out',$sql);
 
-            $sql_stock_out_product = "SELECT * FROM inv_stock_in_product_customer WHERE stock_out_id='$_POST[id]' and deleted_at is null";
+            $sql_stock_out_product = "SELECT * FROM inv_stock_out_product_customer WHERE stock_out_id='$_POST[id]' and deleted_at is null";
             $result_stock_out_product = mysqli_query($conn, $sql_stock_out_product);
 
             foreach($result_stock_out_product as $product){
 
-                $sql_update_stock_out_product = "UPDATE inv_stock_in_product_customer SET deleted_at=current_timestamp() where id='$product[id]'";
+                $sql_update_stock_out_product = "UPDATE inv_stock_out_product_customer SET deleted_at=current_timestamp() where id='$product[id]'";
                 postActionAjax('Stock Out',$sql_update_stock_out_product);
             }
 
-            echo json_encode(['url' => '../stock_out/index.php' , 'status'=>'success']);
+            echo json_encode(['url' => '../stock_out_customer/index.php' , 'status'=>'success']);
 
             exit();
         }
         
-        postAction('Stock In',$action,$sql,"Location:../resource/stock_in_customer/index.php");
+        postAction('Stock Out Customer',$action,$sql,"Location:../resource/stock_out_customer/index.php");
     }
     else
     {
         $id =  isset($_GET['id']) ? $_GET['id'] : null;
 
         $action =  isset($_GET['action']) ? $_GET['action'] : null;
-        $emp_id = $_SESSION['emp_id'];
+
 
         if($id){
-            $sql = "SELECT * FROM inv_stock_in_customer  WHERE id=".$id;
+            $sql = "SELECT * FROM inv_stock_out_customer  WHERE id=".$id;
 
             $sqlProduct = "SELECT a.id, a.quantity as quantity, b.name as product_name  
-                            FROM inv_stock_in_product_customer a  
+                            FROM inv_stock_out_product_customer a  
                             LEFT JOIN inv_product b ON a.product_id = b.id
-                            LEFT JOIN inv_stock_in_customer c ON c.id = a.stock_in_customer_id
-                            WHERE a.stock_in_customer_id=".$id." AND a.deleted_at IS NULL AND c.stakeholder_id=".$emp_id."";
+                            WHERE a.stock_out_id=".$id." AND a.deleted_at IS NULL";
                             
             $result = mysqli_query($conn, $sql);
 
@@ -157,9 +157,8 @@
         elseif($action == 'list')
         {
             $comp_id = $_SESSION['company'];
-            $emp_id = $_SESSION['emp_id'];
 
-            $query =  " where a.deleted_at IS NULL and company_id = '$comp_id' and stakeholder_id = '$emp_id'";
+            $query =  " where a.deleted_at IS NULL and a.company_id = '$comp_id'";
 
             if(isset($_GET["month"]) ? $_GET["month"] : null ){
                 $query = $query." AND MONTH(a.created_at) = ".$_GET['month'];
@@ -169,12 +168,16 @@
                 $query = $query." AND YEAR(a.created_at) = ".$_GET['year'];
             }
 
-            $sql = "SELECT a.id , a.reference_number as reference_number, a.status as status,a.created_at as created_at, b.f_first_name as stakeholder_name 
-                    FROM inv_stock_in_customer a 
-                    LEFT JOIN employees b ON a.stakeholder_id = b.f_id 
+            if(isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null ){
+                $query = $query." AND a.stakeholder_id = ".$_GET['stakeholder'];
+            }
+
+            $sql = "SELECT a.id , a.reference_number as reference_number, a.status as status,a.created_at as created_at, b.name as stakeholder_name 
+                    FROM inv_stock_out_customer a 
+                    LEFT JOIN inv_customer b ON a.stakeholder_id = b.id 
                     $query
                     ORDER BY a.created_at desc";
-            
+                    
             $result = mysqli_query($conn, $sql);
 
             $x = 0;
@@ -224,7 +227,9 @@
                 }
             }
         } elseif($action == 'stock-available'){
-            $sql = "SELECT * FROM inv_available_stock WHERE product_id=$_GET[product_id]";
+            $emp_id = $_SESSION['emp_id'];
+
+            $sql = "SELECT * FROM inv_available_stock_customer WHERE product_id=$_GET[product_id] AND stakeholder_id=$emp_id";
             
             $result = mysqli_query($conn, $sql);
 
@@ -263,9 +268,9 @@
             fputcsv($output, array('Stakeholder', 'Reference Number', 'Date', 'Remark','Product Name','Quantity','Price per unit (RM)','Total (RM)','Status'));
 
             $query = "SELECT b.name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.sales_price, SUM(c.quantity * d.sales_price) AS total, e.name
-            from inv_stock_in_customer AS a
+            from inv_stock_out_customer AS a
             LEFT JOIN inv_contact AS b ON a.stakeholder_id = b.id
-            LEFT JOIN inv_stock_in_product_customer AS c ON a.id = c.stock_out_id
+            LEFT JOIN inv_stock_out_product_customer AS c ON a.id = c.stock_out_id
             LEFT JOIN inv_product AS d ON c.product_id = d.id
             LEFT JOIN inv_status as e ON a.status = e.id
             $query
@@ -286,7 +291,7 @@
     if (isset($_GET['deleteProduct'])) {
         $id = $_GET['deleteProduct'];
         
-        $sql = "UPDATE inv_stock_in_product_customer SET deleted_at=current_timestamp() where id='$id'";
+        $sql = "UPDATE inv_stock_out_product_customer SET deleted_at=current_timestamp() where id='$id'";
             
             postActionAjax('Product',$sql);
             
@@ -295,17 +300,22 @@
     }
 
     if (isset($_GET['validate'])) {
+
+        $emp_id = $_SESSION['emp_id'];
+
         $id = $_GET['validate'];
 
-        $sql = "UPDATE inv_stock_in_customer  SET status='1', updated_at=current_timestamp() where id='$id'";
+        $sql = "UPDATE inv_stock_out_customer  SET status='1', updated_at=current_timestamp() where id='$id'";
         
         $result = mysqli_query($conn, $sql);
         
-        $sql_stock_out_product = "SELECT * FROM inv_stock_in_product_customer WHERE stock_out_id='$id' and deleted_at is null";
+        $sql_stock_out_product = "SELECT * FROM inv_stock_out_product_customer WHERE stock_out_id='$id' and deleted_at is null";
+
         $result_stock_out_product = mysqli_query($conn, $sql_stock_out_product);
 
         foreach($result_stock_out_product as $product){
-                $sql_available_stock = "SELECT * FROM inv_available_stock where product_id='$product[product_id]'";
+                $sql_available_stock = "SELECT * FROM inv_available_stock_customer where product_id='$product[product_id]' and stakeholder_id='$emp_id'";
+
                 $result_available_stock = mysqli_query($conn, $sql_available_stock);
                 $stock = $result_available_stock->fetch_assoc();
 
@@ -313,19 +323,15 @@
 
                     $available_quantity = $stock['quantity'] - $product['quantity'];
 
-                    $sql_update_available_stock = "UPDATE inv_available_stock  SET quantity='$available_quantity' WHERE product_id='$product[product_id]'";
+                    $sql_update_available_stock = "UPDATE inv_available_stock_customer  SET quantity='$available_quantity' WHERE product_id='$product[product_id]' and stakeholder_id='$emp_id'";
                     
 
                     $result = $conn->query($sql_update_available_stock);
-                }else{
-                    $sql_add_available_stock = "INSERT INTO inv_available_stock (product_id,quantity) 
-                    VALUES ('$product[product_id]','$product[quantity]')";
-                    $result = $conn->query($sql_add_available_stock);
                 }
         }
         $sql = null;
         $action = 'validate';
-        postAction('Stock In',$action,$sql,"Location:../resource/stock_out/index.php");
+        postAction('Stock In',$action,$sql,"Location:../resource/stock_out_customer/index.php");
             
     }
 

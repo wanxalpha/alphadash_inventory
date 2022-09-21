@@ -1,9 +1,9 @@
 <?php
-    include_once('../../controller/stock_in_customer.php');
+    include_once('../../controller/stock_in.php');
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
-    $stakeholder = getCustomer();
+    $stakeholder = getSupplier();
 ?>
 
 <!-- Content wrapper -->
@@ -19,13 +19,26 @@
                     <h5 class="card-header2">View Stock In</h5>
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/stock_in_customer.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/stock_in.php" enctype="multipart/form-data">
                             <?php  while($row = $result->fetch_assoc()) { ?>
 
                                 <input class="form-control" type="hidden" name="current_attachment" id="current_attachment" required value="<?php echo $row['attachment']?>"/>
                                 <input type="hidden" name="id" value="<?php echo $row['id'] ?>">
 
-                                <div class="row">                                
+                                <div class="row">
+                                    <div class="mb-3 col-md-3">
+                                        <label for="name" class="form-label">Stakeholder</label>
+                                        <select name="stakeholder_id" id="stakeholder_id" class="select2 form-select" required readonly=true disabled=true>
+                                            <option hidden value=""> ---- Select Stakeholder ----</option>
+                                            <?php while ($cat = mysqli_fetch_array($stakeholder)) { ?>
+                                                <option value="<?php echo $cat['id'] ?>" 
+                                                <?php echo ($row['stakeholder_id'] ==  $cat['id']) ? ' selected="selected"' : '';?>> 
+                                                    <?php echo $cat['name'] ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                
                                     <div class="mb-3 col-md-3">
                                         <label for="reference_number" class="form-label">Referance Number</label>
                                         <input class="form-control" type="text" name="reference_number" id="reference_number" readonly=true value="<?php echo $row['reference_number']?>"/>
@@ -50,7 +63,7 @@
                                         </a>
                                     </div>
                                 
-                                    <div class="mb-3 col-md-3">
+                                    <div class="mb-6 col-md-6">
                                         <label for="remark" class="form-label">Remark</label>
                                         <textarea type="text" class="form-control" id="remark" name="remark" readonly=true disabled=true><?php echo $row['remark']?></textarea>
                                     </div>
@@ -71,6 +84,7 @@
                                                         <th style="width:5%">No</th>
                                                         <th>Product</th>
                                                         <th>Quantity</th>
+                                                        <th>Expired Date</th>
                                                         <!-- <th style="width:5%">Action</th> -->
                                                     </tr>
                                                 </thead>
@@ -80,6 +94,7 @@
                                                             <td><?php echo $idx ?> .</td>
                                                             <td><?php echo ($product['product_name']) ?></td>
                                                             <td><?php echo ($product['quantity']) ?></td>
+                                                            <td><?php echo date('d-m-Y H:i', strtotime($product['expired_date'])) ?></td>
                                                             <!-- <td>
                                                                 <a href="../../controller/stock_in.php?deleteProduct=<?php echo $product['id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i></a>
                                                             </td> -->

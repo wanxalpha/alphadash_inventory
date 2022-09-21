@@ -1,9 +1,9 @@
 <?php
-    include_once('../../controller/stock_out.php');
+    include_once('../../controller/stock_out_customer.php');
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
-    $stakeholder = getRetailer();
+    $stakeholder = getCustomer();
 ?>
 
 <!-- Content wrapper -->
@@ -19,7 +19,7 @@
                     <h5 class="card-header2">Edit Stock Out</h5>
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/stock_out.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/stock_out_customer.php" enctype="multipart/form-data">
                             <?php  while($row = $result->fetch_assoc()) { ?>
 
                                 <input class="form-control" type="hidden" name="current_attachment" id="current_attachment" required value="<?php echo $row['attachment']?>"/>
@@ -133,7 +133,7 @@
                                                             <td><?php echo ($product['product_name']) ?></td>
                                                             <td><?php echo ($product['quantity']) ?></td>
                                                             <td>
-                                                            <a href="../../controller/stock_out.php?deleteProduct=<?php echo $product['id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                                            <a href="../../controller/stock_out_customer.php?deleteProduct=<?php echo $product['id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i></a>
                                                         </td>
                                                         </tr>
                                                     <?php } ?>
@@ -151,12 +151,8 @@
                                     
                                     <button type="submit" name="action" value="update"
                                         class="btn btn-primary me-2 float-right">Submit</button>
-                                    <?php if($_SESSION['role'] == 'Master'){ ?>
-                                    <!-- <button onClick="../../controller/stock_out.php?validate=<?php echo $row['id']; ?>"
-                                        class="btn btn-warning me-2 float-right">Validate</button> -->
                                         
-                                        <a class="btn btn-warning me-2 float-right" href="../../controller/stock_out.php?validate=<?php echo $row['id']; ?>">Validate</a>
-                                    <?php } ?>
+                                    <a class="btn btn-warning me-2 float-right" href="../../controller/stock_out_customer.php?validate=<?php echo $row['id']; ?>">Validate</a>
                                 </div>
                             <?php } ?>
                         </form>
@@ -188,7 +184,7 @@
                 $('.checkProduct').on('change',function(){
 
                     var value = $(this).val();
-                    var url = "../../controller/stock_out.php";
+                    var url = "../../controller/stock_out_customer.php";
 
                     $.get(url, {
                         action: 'stock-available',
@@ -257,7 +253,7 @@
         $('.checkProduct').on('change',function(){
             console.log('asf');
             var value = $(this).val();
-            var url = "../../controller/stock_out.php";
+            var url = "../../controller/stock_out_customer.php";
 
             $.get(url, {
                 action: 'stock-available',
@@ -298,3 +294,4 @@
         // });
     });
 </script>
+

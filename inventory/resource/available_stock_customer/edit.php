@@ -1,9 +1,9 @@
 <?php
-    include_once('../../controller/stock_out.php');
+    include_once('../../controller/stock_in.php');
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
-    $stakeholder = getRetailer();
+    $stakeholder = getSupplier();
 ?>
 
 <!-- Content wrapper -->
@@ -11,19 +11,19 @@
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Stock Out</h4>
+        <h4 class="fw-bold py-3 mb-4">Stock In</h4>
 
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="card">
-                    <h5 class="card-header2">Edit Stock Out</h5>
+                    <h5 class="card-header2">Edit Stock In</h5>
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/stock_out.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/stock_in.php" enctype="multipart/form-data">
                             <?php  while($row = $result->fetch_assoc()) { ?>
 
                                 <input class="form-control" type="hidden" name="current_attachment" id="current_attachment" required value="<?php echo $row['attachment']?>"/>
-                                <input type="hidden" name="id" value="<?php echo $row['id'] ?>">
+                                <input type="hidden" name="id" id="id" value="<?php echo $row['id'] ?>">
 
                                 <div class="row">
                                     <div class="mb-3 col-md-3">
@@ -86,20 +86,22 @@
                                                
                                                 <div class="mb-3 col-lg-3">
                                                     <label for="name" class="form-label">Product</label>
-                                                    <select name="product_id" id="product_id" class="select2 form-select checkProduct">
+                                                    <select name="product_id" id="product_id" class="select2 form-select">
                                                         <option hidden value=""> ---- Select Product ----</option>
-                                                        <?php while ($prod = mysqli_fetch_array($product)) { ?>
-                                                        <option value="<?php echo $prod['id'] ?>"> <?php echo $prod['name'] ?>
-                                                        </option>
+                                                        <?php while ($pro = mysqli_fetch_array($product)) { ?>
+                                                            <option value="<?php echo $pro['id'] ?>"> <?php echo $pro['name'] ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
 
                                                 <div class="mb-3 col-lg-3">
                                                     <label for="name" class="form-label">Quantity</label>
-                                                    <input class="form-control quantity" type="number" name="quantity" id="quantity" />
-                                                    <label for="name" class="form-label">Available Stock: </label>
-                                                    <label for="name" class="form-label available_stock" id='available_stock'></label>
+                                                    <input class="form-control" type="number" name="quantity" id="quantity" />
+                                                </div>
+
+                                                <div class="mb-3 col-lg-3">
+                                                    <label for="name" class="form-label">Expired Date</label>
+                                                    <input class="form-control" type="date" name="expired_date" id="expired_date" />
                                                 </div>
 
                                                 <div class="mb-2 col-lg-2">
@@ -107,8 +109,6 @@
                                                         <input data-repeater-delete type="button" class="btn btn-primary form-control" 
                                                             value="Delete" />
                                                 </div>
-
-                                                <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" />
                                             </div>
                                         </div>
                                     </div>
@@ -123,6 +123,7 @@
                                                         <th style="width:5%">No</th>
                                                         <th>Product</th>
                                                         <th>Quantity</th>
+                                                        <th>Expired Date</th>
                                                         <th style="width:5%">Action</th>
                                                     </tr>
                                                 </thead>
@@ -132,9 +133,10 @@
                                                             <td><?php echo $idx ?> .</td>
                                                             <td><?php echo ($product['product_name']) ?></td>
                                                             <td><?php echo ($product['quantity']) ?></td>
+                                                            <td><?php echo date('d-m-Y H:i', strtotime($product['expired_date'])) ?></td>
                                                             <td>
-                                                            <a href="../../controller/stock_out.php?deleteProduct=<?php echo $product['id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i></a>
-                                                        </td>
+                                                                <a href="../../controller/stock_in.php?deleteProduct=<?php echo $product['id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                                            </td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>
@@ -144,18 +146,13 @@
                                 </div>
                                 
                                 <div class="mt-4">
-                                
-
                                     <a href="index.php" type="submit"
                                         class="btn btn-info btn-default btn-squared px-30 float-left">Back</a>
                                     
                                     <button type="submit" name="action" value="update"
                                         class="btn btn-primary me-2 float-right">Submit</button>
                                     <?php if($_SESSION['role'] == 'Master'){ ?>
-                                    <!-- <button onClick="../../controller/stock_out.php?validate=<?php echo $row['id']; ?>"
-                                        class="btn btn-warning me-2 float-right">Validate</button> -->
-                                        
-                                        <a class="btn btn-warning me-2 float-right" href="../../controller/stock_out.php?validate=<?php echo $row['id']; ?>">Validate</a>
+                                        <a class="btn btn-warning me-2 float-right" href="../../controller/stock_in.php?validate=<?php echo $row['id']; ?>">Validate</a>
                                     <?php } ?>
                                 </div>
                             <?php } ?>
@@ -172,8 +169,11 @@
 
 <script>
     $(document).ready(function () {
-        $( ".quantity" ).prop( "disabled", true );
         "use strict";
+
+        var id = $('#id').val();
+        $('#temp_id').val(id);
+
         $(".repeater").repeater({
             defaultValues: {
                 "textarea-input": "foo",
@@ -183,48 +183,7 @@
                 "radio-input": "B"
             },
             show: function () {
-                $(this).slideDown();
-
-                $('.checkProduct').on('change',function(){
-
-                    var value = $(this).val();
-                    var url = "../../controller/stock_out.php";
-
-                    $.get(url, {
-                        action: 'stock-available',
-                        product_id:value,
-                    })
-                    .done(function (data) {
-                        if (data) {
-                            $('.available_stock').html(data);
-                            $('.temp_quantity').val(data);
-
-                        }
-                        if(data == '0'){
-                            $('.quantity').val("");
-                            $( ".quantity" ).prop( "disabled", true );
-                        }else{
-                            $( ".quantity" ).prop( "disabled", false );
-                        }
-                    })
-                });
-
-                $(".quantity").change(function() { 
-                    console.log($(this).val());
-                    
-                    
-                    var current_quantity = $('.temp_quantity').val();
-                    console.log(current_quantity);
-                    if($(this).val() > current_quantity){
-                        $('.quantity').val("");
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Ops...',
-                            text: 'Exceeded available stock',
-                            timer: 20000,
-                        })
-                    }
-                });
+                $(this).slideDown()
             },
             hide: function (e) {
                 confirm("Are you sure you want to delete this record?") && $(this).slideUp(e)
@@ -253,48 +212,5 @@
                 }
             }]
         })
-
-        $('.checkProduct').on('change',function(){
-            console.log('asf');
-            var value = $(this).val();
-            var url = "../../controller/stock_out.php";
-
-            $.get(url, {
-                action: 'stock-available',
-                product_id:value,
-            })
-            .done(function (data) {
-                if (data) {
-                    $('.available_stock').html(data);
-                    $('.temp_quantity').val(data);
-
-                }
-                if(data == '0'){
-                    $('.quantity').val("");
-                    $( ".quantity" ).prop( "disabled", true );
-                }else{
-                    $( ".quantity" ).prop( "disabled", false );
-                }
-            })
-
-
-
-        });
-
-        // $(".quantity").change(function() { 
-        //     console.log($(this).val());
-            
-        //     var current_quantity = $('.temp_quantity').val();
-
-        //     if($(this).val() > current_quantity){
-        //         $('.quantity').val("");
-        //         Swal.fire({
-        //             icon: 'warning',
-        //             title: 'Ops...',
-        //             text: 'Exceeded available stock',
-        //             timer: 20000,
-        //         })
-        //     }
-        // });
     });
 </script>

@@ -36,7 +36,7 @@
             $filename = $_POST['f_picture'];
         }
         
-        $sql = "UPDATE employees SET f_picture='$filename',f_first_name='$_POST[f_first_name]',f_last_name='$_POST[f_last_name]',f_com_email='$_POST[f_com_email]',f_emp_id='$_POST[f_emp_id]',f_contact='$_POST[f_contact]',f_modified_date=current_timestamp() WHERE f_id='$_POST[id]'";
+        $sql = "UPDATE employees SET f_picture='$filename',f_first_name='$_POST[f_first_name]',f_last_name='$_POST[f_last_name]',f_com_email='$_POST[f_com_email]',f_contact='$_POST[f_contact]',f_modified_date=current_timestamp() WHERE f_id='$_POST[id]'";
 
         postAction('Profile',$action,$sql,"Location:../resource/dashboard/myprofile.php");
 

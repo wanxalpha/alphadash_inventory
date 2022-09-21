@@ -39,11 +39,11 @@ $stakeholder_category = getStakeholderCategory();
                                 </div>
                             </div>
                             <div class="row">
-                            <div class="mb-3 col-md-4">
+                                <!-- <div class="mb-3 col-md-4">
                                     <label for="email" class="form-label">Employee Id</label>
                                     <input class="form-control" type="text" name="f_emp_id" value="<?php echo $row['f_emp_id'] ?>"
                                         id="f_emp_id" required />
-                                </div>
+                                </div> -->
                                 <div class="mb-3 col-md-4">
                                     <label for="email" class="form-label">Email</label>
                                     <input class="form-control" type="email" name="f_com_email" value="<?php echo $row['f_com_email'] ?>"
@@ -54,18 +54,6 @@ $stakeholder_category = getStakeholderCategory();
                                     <input class="form-control" type="text" name="f_password" value="<?php echo $row['f_password'] ?>"
                                         id="f_password" required />
                                 </div>
-                            </div>
-                            <div class="row">
-                                <!-- <div class="mb-3 col-md-4">
-                                    <label for="f_user_level" class="form-label">User Level<span class="text-danger">*</span></label>
-                                    <select required name="f_user_level" id="f_user_level" class="form-control select">
-                                        <option value="" hidden>Select User Level</option>
-                                        <option value="Admin" <?php if($row['f_user_level'] == 'Admin') echo 'selected' ?> >Admin</option>
-                                        <option value="Master" <?php if($row['f_user_level'] == 'Master') echo 'selected' ?>>Master Admin</option>
-                                        <option value="User" <?php if($row['f_user_level'] == 'User') echo 'selected' ?>>Normal User</option>
-                                    </select>
-                                </div> -->
-
                                 <div class="mb-3 col-md-4">
                                     <label for="category_id" class="form-label">Category</label>
                                     <select name="category_id" id="category_id" class="select2 form-select" required>
@@ -78,6 +66,12 @@ $stakeholder_category = getStakeholderCategory();
                                         <?php } ?>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3 col-md-4">
+                                    <label for="f_user_level" class="form-label">Address</label>
+                                    <textarea type="text" class="form-control" id="address" name="address"><?php echo $row['f_address']?></textarea>
+                                </div>                                
                             </div>
                        
                             

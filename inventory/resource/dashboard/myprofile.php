@@ -71,16 +71,6 @@
                                     <input class="form-control" type="email" id="f_com_email" name="f_com_email" value="<?php echo $row['f_com_email'] ?>" />
                                 </div>
 
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <h6 class="mb-0">Employee Id</h6>
-                                </div>
-                                <div class="col-sm-4 text-secondary">
-                                    <input class="form-control" type="text" id="f_emp_id" name="f_emp_id" value="<?php echo $row['f_emp_id'] ?>" />
-                                </div>
-
                                 <div class="col-sm-2">
                                     <h6 class="mb-0">Contact No</h6>
                                 </div>

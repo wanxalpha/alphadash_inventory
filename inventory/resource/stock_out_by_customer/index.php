@@ -1,5 +1,5 @@
 <?php
-    include_once('../../controller/stock_in_customer.php');
+    include_once('../../controller/stock_out_by_customer.php');
     include_once("../../layouts/menu.php"); 
 
     $stakeholder = getCustomer();
@@ -7,7 +7,7 @@
 
 <div class="content-wrapper">
   <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4">Stock In Customer</h4>
+    <h4 class="fw-bold py-3 mb-4">Stock Out By Customer</h4>
     <div class="row mb-12">
       <div class="col-md-2">
         <label class="form-label">Month</label>
@@ -56,7 +56,7 @@
       <div class="col-md-6" align='right'>
       <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
         &nbsp;
-        <a href="../stock_in_customer/create.php" class="btn btn-primary">Add Stock In</a>  
+        <a href="../stock_out_by_customer/create.php" class="btn btn-primary">Add Stock In</a>  
       </div>
     </div>
     <br>
@@ -75,7 +75,7 @@
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
-              <tbody class="table-border-bottom-0" id="index_stock_in_customer">
+              <tbody class="table-border-bottom-0" id="index_stock_out_by_customer">
               </tbody>
             </table>
           </div>
@@ -87,4 +87,4 @@
 
 <?php include_once("../../layouts/footer.php"); ?>
 
-<script type="text/javascript" src="../../assets/js/resource/stock_in_customer.js"> </script>
+<script type="text/javascript" src="../../assets/js/resource/stock_out_by_customer.js"> </script>

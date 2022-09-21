@@ -5,15 +5,16 @@
     include_once('Lookup/SoftDelete.php');
 
 
-        $data_kpi = getKPISalesPerson();
-        $data_team_kpi = getKPISalesTeam();
-        $data_funnel_status = getStatusFunnel();
-        $data_funnel_category = getCategoryFunnel();
-        $data_pillar = calculatePillar();
-        $data_pillar_increase = calculatePillar(true);
-        $data_calendar = Calendar();
+    $data_kpi = getKPISalesPerson();
+    $data_team_kpi = getKPISalesTeam();
+    $data_funnel_status = getStatusFunnel();
+    $data_funnel_category = getCategoryFunnel();
+    $data_pillar = calculatePillar();
+    $data_pillar_increase = calculatePillar(true);
+    $data_calendar = Calendar();
 
-        $purchase_details = purchaseDetails();
+    $purchase_details = purchaseDetails();
+    $low_quantity_alert = lowQuantityAlert();
 
     function purchaseDetails(){
         global $conn;
@@ -29,6 +30,22 @@
 
         $result = mysqli_query($conn, $query);
 
+        return $result;
+    }
+
+    function lowQuantityAlert(){
+        global $conn;
+        $comp_id = $_SESSION['company'];
+
+        $sql = "SELECT a.id , a.quantity as quantity, b.name as name, b.low_quantity_alert as low_quantity_alert, c.name as category_name
+                FROM inv_available_stock a 
+                LEFT JOIN inv_product b ON a.product_id = b.id 
+                LEFT JOIN inv_product_category c on b.product_category_id = c.id
+                WHERE b.company_id = '$comp_id'
+                ORDER BY b.name desc";
+
+        $result = mysqli_query($conn, $sql);
+        
         return $result;
     }
 

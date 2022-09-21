@@ -116,6 +116,7 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Menu</span></li>
 
                     <?php if($_SESSION['designation'] == '4'){ ?>
+                    <!-- merchant -->
                         <li class="menu-item">
                             <a href="../available_stock/index.php" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
@@ -134,6 +135,20 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                             <a href="../stock_out/index.php" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
                                 <div data-i18n="Documentation">Stock Out</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="../stock_out_by_customer/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar me-2"></i>
+                                <div data-i18n="Documentation">Stock Out By Customer</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="../merchant_customer/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Customer List</div>
                             </a>
                         </li>
 
@@ -193,11 +208,29 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                             </a>
                         </li>
                     <?php } elseif ($_SESSION['designation'] == '2') {?>
-                    <!-- customer -->
+                    <!-- retailer -->
+                        <li class="menu-item">
+                            <a href="../available_stock_customer/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Available Stock</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="../retailer_customer/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Customer List</div>
+                            </a>
+                        </li>
                         <li class="menu-item">
                             <a href="../stock_in_customer/index.php" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
                                 <div data-i18n="Documentation">Stock In</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="../stock_out_customer/index.php" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-power-off me-2"></i>
+                                <div data-i18n="Documentation">Stock Out</div>
                             </a>
                         </li>
                     <?php } ?>

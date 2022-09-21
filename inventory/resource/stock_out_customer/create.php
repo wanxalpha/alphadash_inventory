@@ -1,5 +1,5 @@
 <?php
-    include_once('../../controller/stock_in_customer.php');
+    include_once('../../controller/stock_out_customer.php');
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
@@ -11,20 +11,31 @@
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Stock In Customer</h4>
+        <h4 class="fw-bold py-3 mb-4">Stock Out Customer</h4>
 
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="card">
-                    <h5 class="card-header2">Add Stock In</h5>
+                    <h5 class="card-header2">Add Stock Out</h5>
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/stock_in_customer.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/stock_out_customer.php" enctype="multipart/form-data">
                            
-                            <div class="row">
+                            <div class="row">   
                                 <div class="mb-3 col-md-3">
-                                        <label for="reference_number" class="form-label">Referance Number</label>
-                                        <input class="form-control" type="text" name="reference_number" id="reference_number" required />
+                                    <label for="name" class="form-label">Customer</label>
+                                    <select name="stakeholder_id" id="stakeholder_id" class="select2 form-select" required>
+                                        <option hidden value=""> ---- Select Customer ----</option>
+                                        <?php while ($row = mysqli_fetch_array($stakeholder)) { ?>
+                                        <option value="<?php echo $row['id'] ?>"> <?php echo $row['name'] ?>
+                                        </option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3 col-md-3">
+                                    <label for="reference_number" class="form-label">Referance Number</label>
+                                    <input class="form-control" type="text" name="reference_number" id="reference_number" required />
                                 </div>
 
                                 <div class="mb-3 col-md-3">
@@ -37,7 +48,7 @@
                                     <input class="form-control" type="file" name="attachment" id="attachment" required />
                                 </div>
                             
-                                <div class="mb-6 col-md-3">
+                                <div class="mb-3 col-md-3">
                                     <label for="remark" class="form-label">Remark</label>
                                     <textarea type="text" class="form-control" id="remark" name="remark">
                                     </textarea>
@@ -76,11 +87,6 @@
                                                 <label for="name" class="form-label">Available Stock: </label>
                                                 <label for="name" class="form-label available_stock" id='available_stock'></label>
                                             </div>
-
-                                            <!-- <div class="mb-3 col-lg-3">
-                                                <label for="name" class="form-label">Expired Date</label>
-                                                <input class="form-control" type="date" name="expired_date" id="expired_date" />
-                                            </div> -->
 
                                             <div class="mb-2 col-lg-2">
                                                 <label for="name" class="form-label">&nbsp;</label>
@@ -130,7 +136,7 @@
                 $('.checkProduct').on('change',function(){
                     console.log('asf');
                     var value = $(this).val();
-                    var url = "../../controller/stock_in_customer.php";
+                    var url = "../../controller/stock_out_customer.php";
 
                     $.get(url, {
                         action: 'stock-available',
@@ -156,7 +162,7 @@
 
                 $(".quantity").change(function() { 
                     console.log($(this).val());
-                    
+                    console.log('masuk sini ha');
                     var current_quantity = $('.temp_quantity').val();
 
                     if($(this).val() > current_quantity){
@@ -199,9 +205,9 @@
         })
 
         $('.checkProduct').on('change',function(){
-            console.log('asf');
+       
             var value = $(this).val();
-            var url = "../../controller/stock_in_customer.php";
+            var url = "../../controller/stock_out_customer.php";
 
             $.get(url, {
                 action: 'stock-available',
@@ -226,11 +232,16 @@
         });
 
         $(".quantity").change(function() { 
-            console.log($(this).val());
             
-            var current_quantity = $('.temp_quantity').val();
+            
+            var request_quantity = parseInt($(this).val());
+            var current_quantity = parseInt($('.temp_quantity').val());
+            console.log(request_quantity);
+            console.log(current_quantity);
 
-            if($(this).val() > current_quantity){
+            if(request_quantity > current_quantity){
+            console.log('lebihhh');
+
                 $('.quantity').val("");
                 Swal.fire({
                     icon: 'warning',
@@ -238,6 +249,9 @@
                     text: 'Exceeded available stock',
                     timer: 20000,
                 })
+            }else{
+            console.log('kuranggg');
+
             }
         });
     });

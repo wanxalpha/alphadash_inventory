@@ -1,5 +1,5 @@
 <?php
-    include_once('../../controller/stock_in_customer.php');
+    include_once('../../controller/stock_out.php');
     include_once("../../layouts/menu.php");
 
     $product = getProduct();
@@ -11,21 +11,34 @@
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Stock In</h4>
+        <h4 class="fw-bold py-3 mb-4">Stock Out</h4>
 
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="card">
-                    <h5 class="card-header2">View Stock In</h5>
+                    <h5 class="card-header2">View Stock Out</h5>
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/stock_in_customer.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/stock_out.php" enctype="multipart/form-data">
                             <?php  while($row = $result->fetch_assoc()) { ?>
 
                                 <input class="form-control" type="hidden" name="current_attachment" id="current_attachment" required value="<?php echo $row['attachment']?>"/>
                                 <input type="hidden" name="id" value="<?php echo $row['id'] ?>">
 
-                                <div class="row">                                
+                                <div class="row">
+                                    <div class="mb-3 col-md-3">
+                                        <label for="name" class="form-label">Stakeholder</label>
+                                        <select name="stakeholder_id" id="stakeholder_id" class="select2 form-select" required readonly=true disabled=true>
+                                            <option hidden value=""> ---- Select Stakeholder ----</option>
+                                            <?php while ($cat = mysqli_fetch_array($stakeholder)) { ?>
+                                                <option value="<?php echo $cat['id'] ?>" 
+                                                <?php echo ($row['stakeholder_id'] ==  $cat['id']) ? ' selected="selected"' : '';?>> 
+                                                    <?php echo $cat['name'] ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                
                                     <div class="mb-3 col-md-3">
                                         <label for="reference_number" class="form-label">Referance Number</label>
                                         <input class="form-control" type="text" name="reference_number" id="reference_number" readonly=true value="<?php echo $row['reference_number']?>"/>
@@ -50,7 +63,7 @@
                                         </a>
                                     </div>
                                 
-                                    <div class="mb-3 col-md-3">
+                                    <div class="mb-6 col-md-6">
                                         <label for="remark" class="form-label">Remark</label>
                                         <textarea type="text" class="form-control" id="remark" name="remark" readonly=true disabled=true><?php echo $row['remark']?></textarea>
                                     </div>

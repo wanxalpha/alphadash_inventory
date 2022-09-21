@@ -17,21 +17,22 @@
 
         if($action == 'create')
         {
-            $check_employee = checkEmployeeID($_POST['f_emp_id']);
+            // $check_employee = checkEmployeeID($_POST['f_emp_id']);
             $comp_id = $_SESSION['company'];
             $f_emp_status = 1;
 
-            if(!$check_employee)
-            {
-                $sql = "INSERT into employees (f_first_name,f_last_name,f_com_email,f_department,f_designation,f_password,f_user_level,f_emp_id,f_company_id,f_contact,f_emp_status,f_created_date,f_modified_date) 
-                values ('$_POST[f_first_name]','$_POST[f_last_name]','$_POST[f_com_email]','$deparment_id','$_POST[category_id]','$_POST[f_password]','$role','$_POST[f_emp_id]','$comp_id','$_POST[f_contact]','$f_emp_status',current_timestamp(),current_timestamp())";
-            }
+            // if(!$check_employee)
+            // {
+                $sql = "INSERT into employees (f_first_name,f_last_name,f_com_email,f_department,f_designation,f_password,f_user_level,f_company_id,f_contact,f_emp_status,f_address,f_created_date,f_modified_date) 
+                values ('$_POST[f_first_name]','$_POST[f_last_name]','$_POST[f_com_email]','$deparment_id','$_POST[category_id]','$_POST[f_password]','$role','$comp_id','$_POST[f_contact]','$f_emp_status','$_POST[address]',current_timestamp(),current_timestamp())";
+            // }
+            // echo($sql);exit();
         }
         elseif($action == 'update')
         {
-            $check_employee = checkEmployeeID($_POST['f_emp_id'],$_POST['id']);
+            // $check_employee = checkEmployeeID($_POST['f_emp_id'],$_POST['id']);
 
-            $sql = "UPDATE employees SET f_first_name='$_POST[f_first_name]',f_last_name='$_POST[f_last_name]',f_com_email='$_POST[f_com_email]',f_password='$_POST[f_password]',f_identity='$_POST[f_identity]',f_emp_id='$_POST[f_emp_id]',f_contact='$_POST[f_contact]',f_user_level='$_POST[f_user_level]',f_designation='$_POST[category_id]',f_modified_date=current_timestamp() WHERE f_id='$_POST[id]'";
+            $sql = "UPDATE employees SET f_first_name='$_POST[f_first_name]',f_last_name='$_POST[f_last_name]',f_com_email='$_POST[f_com_email]',f_password='$_POST[f_password]',f_identity='$_POST[f_identity]',f_contact='$_POST[f_contact]',f_user_level='$_POST[f_user_level]',f_designation='$_POST[category_id]',f_address='$_POST[address]',f_modified_date=current_timestamp() WHERE f_id='$_POST[id]'";
         }
         elseif($action == 'delete')
         {
@@ -95,7 +96,7 @@
 
 
         if($id){
-            $sql = "SELECT f_id,f_first_name,f_last_name,f_com_email,f_identity,f_password,f_emp_id,f_contact,f_email,f_user_level,f_designation FROM employees WHERE f_id=".$id;
+            $sql = "SELECT f_id,f_first_name,f_last_name,f_com_email,f_identity,f_password,f_emp_id,f_contact,f_email,f_user_level,f_designation, f_address FROM employees WHERE f_id=".$id;
 
             $result = mysqli_query($conn, $sql);
         }

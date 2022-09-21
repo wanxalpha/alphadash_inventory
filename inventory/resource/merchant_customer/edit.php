@@ -1,6 +1,6 @@
 <?php
 
-include_once('../../controller/contact.php');
+include_once('../../controller/retailer_customer.php');
 
 // $sales_person = getSalesPerson();
 $project_pillar = getPillar();
@@ -14,45 +14,25 @@ $stakeholder_category = getStakeholderCategory();
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Stakeholders</h4>
+        <h4 class="fw-bold py-3 mb-4">Customers</h4>
 
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="card">
-                    <h5 class="card-header2">Edit Stakeholder</h5>
+                    <h5 class="card-header2">Edit Customer</h5>
 
                     <div class="card-body">
 
-                        <form class="repeater" method="POST" action="../../controller/contact.php" enctype="multipart/form-data">
+                        <form class="repeater" method="POST" action="../../controller/retailer_customer.php" enctype="multipart/form-data">
 
                             <?php  while($row = $result->fetch_assoc()) { ?>
                                 <input type="hidden" name="id" value="<?php echo $row['id'] ?>">
 
                                 <div class="row" >
-                                    
-                                    <div class="mb-3 col-md-3">
-                                        <label for="category_id" class="form-label">Category</label>
-                                        <select name="category_id" id="category_id" class="select2 form-select" required>
-                                            <option hidden value=""> ---- Select Stakeholder Category ----</option>
-                                            <?php while ($cat = mysqli_fetch_array($stakeholder_category)) { ?>
-                                                <option value="<?php echo $cat['id'] ?>" 
-                                                <?php echo ($row['category_id'] ==  $cat['id']) ? ' selected="selected"' : '';?>> 
-                                                    <?php echo $cat['name'] ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-
                                     <div class="mb-3 col-md-3">
                                         <label for="name" class="form-label">Name</label>
                                         <input class="form-control" type="text" id="name"
                                             name="name" autofocus required value="<?php echo $row['name'] ?>"/>
-                                    </div>
-
-                                    <div class="mb-3 col-md-3">
-                                        <label for="company_name" class="form-label">Company Name</label>
-                                        <input class="form-control" type="text" id="company_name"
-                                            name="company_name" autofocus required value="<?php echo $row['company_name'] ?>"/>
                                     </div>
 
                                     <div class="mb-3 col-md-3">
@@ -72,18 +52,12 @@ $stakeholder_category = getStakeholderCategory();
                                         <input class="form-control" type="email" name="email"
                                             id="email" required value="<?php echo $row['email'] ?>"/>
                                     </div>
-                                    
-                                    <div class="mb-3 col-md-3">
-                                        <label for="tax_number" class="form-label">Tax Number</label>
-                                        <input class="form-control" type="text" id="tax_number"
-                                            name="tax_number" autofocus required value="<?php echo $row['tax_number'] ?>"/>
-                                    </div>
 
-                                    <div class="mb-3 col-md-3">
-                                        <label for="address" class="form-label">Address</label>
-                                        <input class="form-control" type="text" id="address"
-                                            name="address" autofocus required value="<?php echo $row['address'] ?>"/>
-                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label for="f_user_level" class="form-label">Address</label>
+                                        <textarea type="text" class="form-control" id="address" name="address"><?php echo $row['address'] ?></textarea>
+                                    </div>    
+
                                 </div>  
                             <?php } ?>
                                 <div class="mt-4">

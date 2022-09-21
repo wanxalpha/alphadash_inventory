@@ -82,6 +82,35 @@
             </div>
             <div class="col-md-6 mb-4">
                 <div class="card mb-3 overflow-hidden h-100">
+                    <h5 class="card-header2" style="text-align: center;">Low Quantity Alert</h5>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>No</td>
+                                    <td>Name</td>
+                                    <td>Quantity</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $idx = 0; while($product = $low_quantity_alert->fetch_assoc()) {  $idx += 1;?>
+                                    <?php if($product['quantity'] <= $product['low_quantity_alert']) {?>
+                                        <tr>
+                                            <td><?php echo $idx ?> .</td>
+                                            <td><?php echo ($product['name']) ?></td>
+                                            <td><?php echo ($product['quantity']) ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card mb-3 overflow-hidden h-100">
                     <h5 class="card-header2" style="text-align: center;">Stock In</h5>
                     <div class="card-body">
                         <div class="row">
