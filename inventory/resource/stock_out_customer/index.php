@@ -9,6 +9,14 @@
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4">Stock Out</h4>
     <div class="row mb-12">
+      
+      <div class="col-md-12" align='right'>
+        <button class="btn btn-primary" id="btn_export_pdf" >Export PDF</button>
+        <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
+        <a href="../stock_out_customer/create.php" class="btn btn-primary">Add Stock Out</a>  
+      </div>
+    </div>
+    <div class="row mb-12">
       <div class="col-md-2">
         <label class="form-label">Month</label>
         <select name="filter_month" id="filter_month" class="select2 form-select" required>
@@ -52,11 +60,6 @@
       <div class="col-md-2">
         <label class="form-label"> </label>
         <button id="search" style="float:bottom;" class="btn btn-primary form-control">Search</button>
-      </div>
-      <div class="col-md-4" align='right'>
-      <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
-        &nbsp;
-        <a href="../stock_out_customer/create.php" class="btn btn-primary">Add Stock Out</a>  
       </div>
     </div>
     <br>

@@ -85,8 +85,86 @@ var options_teams_kpi = {
 var chart = new ApexCharts(document.querySelector("#sales_team_kpi"), options_teams_kpi);
 chart.render();
 
-var options_sales_funnel = {
-    series: data_funnel_status,
+//stock in
+var stock_in = {
+
+  series: data_stock_in,
+  labels: data_label_funnel_status,
+  dataLabels: {
+      formatter: function (val, opts) {
+          return opts.w.config.series[opts.seriesIndex] + ' ' + opts.w.config.labels[opts.seriesIndex];
+      },
+    },
+  chart: {
+      type: 'pie',
+      data: {
+        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        datasets: [{
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+      },
+  },
+  responsive: [{
+      breakpoint: 480,
+      options: {
+          chart: {
+              width: 200
+          },
+          legend: {
+              position: 'bottom'
+          }
+      }
+  }],
+  
+};
+
+var chart = new ApexCharts(document.querySelector("#stock_in"), stock_in);
+chart.render();
+
+//stock in customer
+var stock_in_customer = {
+
+  series: data_stock_in_customer,
+  labels: data_label_funnel_status,
+  dataLabels: {
+      formatter: function (val, opts) {
+          return opts.w.config.series[opts.seriesIndex] + ' ' + opts.w.config.labels[opts.seriesIndex];
+      },
+    },
+  chart: {
+      type: 'pie',
+  },
+  responsive: [{
+      breakpoint: 480,
+      options: {
+          chart: {
+              width: 200
+          },
+          legend: {
+              position: 'bottom'
+          }
+      }
+  }],
+  
+};
+
+var chart = new ApexCharts(document.querySelector("#stock_in_customer"), stock_in_customer);
+chart.render();
+
+//stock out
+var stock_out = {
+
+    series: data_stock_out,
     labels: data_label_funnel_status,
     dataLabels: {
         formatter: function (val, opts) {
@@ -94,7 +172,7 @@ var options_sales_funnel = {
         },
       },
     chart: {
-        type: 'polarArea',
+        type: 'pie',
         events: {
             dataPointSelection: function (event, chartContext, config) {
                 // console.log('seriesIndex', config.seriesIndex);
@@ -102,7 +180,6 @@ var options_sales_funnel = {
 
                 var status_month = $('#status_month').val();
                 var status_year = $('#status_year').val();
-                var status_product = $('#status_product').val();
 
                 window.open('../sales_funnel?status='+config.dataPointIndex+'&year='+status_year+'&month='+status_month+'&product='+status_product, '_blank');
             },  
@@ -122,7 +199,89 @@ var options_sales_funnel = {
     
 };
 
-var chart = new ApexCharts(document.querySelector("#sales_funnel"), options_sales_funnel);
+var chart = new ApexCharts(document.querySelector("#sales_funnel"), stock_out);
+chart.render();
+
+//stock out customer
+var stock_out_customer = {
+
+  series: data_stock_out_customer,
+  labels: data_label_funnel_status,
+  dataLabels: {
+      formatter: function (val, opts) {
+          return opts.w.config.series[opts.seriesIndex] + ' ' + opts.w.config.labels[opts.seriesIndex];
+      },
+    },
+  chart: {
+      type: 'pie',
+      events: {
+          dataPointSelection: function (event, chartContext, config) {
+              // console.log('seriesIndex', config.seriesIndex);
+              // console.log('dataPointIndex', config.dataPointIndex);
+
+              var status_month = $('#status_month').val();
+              var status_year = $('#status_year').val();
+
+              window.open('../sales_funnel?status='+config.dataPointIndex+'&year='+status_year+'&month='+status_month+'&product='+status_product, '_blank');
+          },  
+      },
+  },
+  responsive: [{
+      breakpoint: 480,
+      options: {
+          chart: {
+              width: 200
+          },
+          legend: {
+              position: 'bottom'
+          }
+      }
+  }],
+  
+};
+
+var chart = new ApexCharts(document.querySelector("#stock_out_customer"), stock_out_customer);
+chart.render();
+
+//stock return
+var stock_return = {
+
+  series: data_stock_return,
+  labels: data_label_stock_return,
+  dataLabels: {
+      formatter: function (val, opts) {
+          return opts.w.config.series[opts.seriesIndex] + ' ' + opts.w.config.labels[opts.seriesIndex];
+      },
+    },
+  chart: {
+      type: 'pie',
+      events: {
+          dataPointSelection: function (event, chartContext, config) {
+              // console.log('seriesIndex', config.seriesIndex);
+              // console.log('dataPointIndex', config.dataPointIndex);
+
+              var status_month = $('#status_month').val();
+              var status_year = $('#status_year').val();
+
+              window.open('../sales_funnel?status='+config.dataPointIndex+'&year='+status_year+'&month='+status_month+'&product='+status_product, '_blank');
+          },  
+      },
+  },
+  responsive: [{
+      breakpoint: 480,
+      options: {
+          chart: {
+              width: 200
+          },
+          legend: {
+              position: 'bottom'
+          }
+      }
+  }],
+  
+};
+
+var chart = new ApexCharts(document.querySelector("#stock_return"), stock_return);
 chart.render();
 
 var options_sales_funnel_category = {
@@ -532,19 +691,35 @@ $('#status_year').on('change', function() {
     urlDashboard();
 });
 
-$('#status_product').on('change', function() {
+$('#stock_in_month').on('change', function() {
   urlDashboard();
 });
 
-$('#demand_less_year').on('change', function() {
+$('#stock_in_year').on('change', function() {
   urlDashboard();
 });
 
-$('#demand_less_product').on('change', function() {
+$('#stock_in_month_customer').on('change', function() {
   urlDashboard();
 });
 
-$('#demand_more_year').on('change', function() {
+$('#stock_in_year_customer').on('change', function() {
+  urlDashboard();
+});
+
+$('#stock_out_month_customer').on('change', function() {
+  urlDashboard();
+});
+
+$('#stock_out_year_customer').on('change', function() {
+  urlDashboard();
+});
+
+$('#stock_return_month').on('change', function() {
+  urlDashboard();
+});
+
+$('#stock_return_year').on('change', function() {
   urlDashboard();
 });
 
@@ -593,10 +768,14 @@ function urlDashboard(){
 
   var status_month = $('#status_month').val();
   var status_year = $('#status_year').val();
-  var status_product = $('#status_product').val();
-  var demand_less_year = $('#demand_less_year').val();
-  var demand_less_product = $('#demand_less_product').val();
-  var demand_more_year = $('#demand_more_year').val();
+  var stock_in_month = $('#stock_in_month').val();
+  var stock_in_year = $('#stock_in_year').val();
+  var stock_in_month_customer = $('#stock_in_month_customer').val();
+  var stock_in_year_customer = $('#stock_in_year_customer').val();
+  var stock_out_month_customer = $('#stock_out_month_customer').val();
+  var stock_out_year_customer = $('#stock_out_year_customer').val();
+  var stock_return_month = $('#stock_return_month').val();
+  var stock_return_year = $('#stock_return_year').val();
   var demand_more_product = $('#demand_more_product').val();
   var kpi_month = $('#kpi_month').val();
   var kpi_year = $('#kpi_year').val();
@@ -612,13 +791,19 @@ function urlDashboard(){
 
   if(status_year) url += 'status_year='+status_year+'&';
 
-  if(status_product) url += 'status_product='+status_product+'&';
+  if(stock_in_month) url += 'stock_in_month='+stock_in_month+'&';
 
-  if(demand_less_year) url += 'demand_less_year='+demand_less_year+'&';
+  if(stock_in_year) url += 'stock_in_year='+stock_in_year+'&';
 
-  if(demand_less_product) url += 'demand_less_product='+demand_less_product+'&';
+  if(stock_return_month) url += 'stock_return_month='+stock_return_month+'&';
 
-  if(demand_more_year) url += 'demand_more_year='+demand_more_year+'&';
+  if(stock_return_year) url += 'stock_return_year='+stock_return_year+'&';
+
+  if(stock_in_month_customer) url += 'stock_in_month_customer='+stock_in_month_customer+'&';
+  if(stock_in_year_customer) url += 'stock_in_year_customer='+stock_in_year_customer+'&';
+
+  if(stock_out_month_customer) url += 'stock_out_month_customer='+stock_out_month_customer+'&';
+  if(stock_out_year_customer) url += 'stock_out_year_customer='+stock_out_year_customer+'&';
 
   if(demand_more_product) url += 'demand_more_product='+demand_more_product+'&';
 

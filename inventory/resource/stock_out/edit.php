@@ -2,7 +2,7 @@
     include_once('../../controller/stock_out.php');
     include_once("../../layouts/menu.php");
 
-    $product = getProduct();
+    $product = getProductMerchant();
     $stakeholder = getRetailer();
 ?>
 
@@ -86,10 +86,10 @@
                                                
                                                 <div class="mb-3 col-lg-3">
                                                     <label for="name" class="form-label">Product</label>
-                                                    <select name="product_id" id="product_id" class="select2 form-select checkProduct">
+                                                    <select name="product_id" id="product_id" class="select2 form-select">
                                                         <option hidden value=""> ---- Select Product ----</option>
                                                         <?php while ($prod = mysqli_fetch_array($product)) { ?>
-                                                        <option value="<?php echo $prod['id'] ?>"> <?php echo $prod['name'] ?>
+                                                        <option value="<?php echo $prod['id'] ?>"> <?php echo $prod['name'] ?> - <?php echo $prod['quantity'] ?>
                                                         </option>
                                                         <?php } ?>
                                                     </select>
@@ -97,9 +97,9 @@
 
                                                 <div class="mb-3 col-lg-3">
                                                     <label for="name" class="form-label">Quantity</label>
-                                                    <input class="form-control quantity" type="number" name="quantity" id="quantity" />
-                                                    <label for="name" class="form-label">Available Stock: </label>
-                                                    <label for="name" class="form-label available_stock" id='available_stock'></label>
+                                                    <input class="form-control" type="number" name="quantity" id="quantity" />
+                                                    <!-- <label for="name" class="form-label">Available Stock: </label>
+                                                    <label for="name" class="form-label available_stock" id='available_stock'></label> -->
                                                 </div>
 
                                                 <div class="mb-2 col-lg-2">
@@ -108,7 +108,7 @@
                                                             value="Delete" />
                                                 </div>
 
-                                                <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" />
+                                                <!-- <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" /> -->
                                             </div>
                                         </div>
                                     </div>
@@ -172,7 +172,7 @@
 
 <script>
     $(document).ready(function () {
-        $( ".quantity" ).prop( "disabled", true );
+        // $( ".quantity" ).prop( "disabled", true );
         "use strict";
         $(".repeater").repeater({
             defaultValues: {
@@ -254,32 +254,32 @@
             }]
         })
 
-        $('.checkProduct').on('change',function(){
-            console.log('asf');
-            var value = $(this).val();
-            var url = "../../controller/stock_out.php";
+        // $('.checkProduct').on('change',function(){
+        //     console.log('asf');
+        //     var value = $(this).val();
+        //     var url = "../../controller/stock_out.php";
 
-            $.get(url, {
-                action: 'stock-available',
-                product_id:value,
-            })
-            .done(function (data) {
-                if (data) {
-                    $('.available_stock').html(data);
-                    $('.temp_quantity').val(data);
+        //     $.get(url, {
+        //         action: 'stock-available',
+        //         product_id:value,
+        //     })
+        //     .done(function (data) {
+        //         if (data) {
+        //             $('.available_stock').html(data);
+        //             $('.temp_quantity').val(data);
 
-                }
-                if(data == '0'){
-                    $('.quantity').val("");
-                    $( ".quantity" ).prop( "disabled", true );
-                }else{
-                    $( ".quantity" ).prop( "disabled", false );
-                }
-            })
+        //         }
+        //         if(data == '0'){
+        //             $('.quantity').val("");
+        //             $( ".quantity" ).prop( "disabled", true );
+        //         }else{
+        //             $( ".quantity" ).prop( "disabled", false );
+        //         }
+        //     })
 
 
 
-        });
+        // });
 
         // $(".quantity").change(function() { 
         //     console.log($(this).val());

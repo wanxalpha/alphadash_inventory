@@ -62,3 +62,11 @@ $('#btn_export_excel').click(function(){
 
     location.href = url + "?action=export&month=" + month + "&year=" + year + "&stakeholder=" + stakeholder;
 });
+
+$('#btn_export_pdf').click(function(){
+    var month = $('#filter_month').val();
+    var year = $('#filter_year').val();
+    var stakeholder = $('#filter_stakeholder').val();
+
+    location.href = url + "?action=exportPdf&month=" + month + "&year=" + year + "&stakeholder=" + stakeholder;
+});

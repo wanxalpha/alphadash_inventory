@@ -100,7 +100,7 @@
                                                 </div>
 
                                                 <div class="mb-3 col-lg-3">
-                                                <label for="remark" class="form-label">Remark</label>
+                                                <label for="remark" class="form-label">Reason</label>
                                                 <textarea type="text" class="form-control" id="remark" name="remark"></textarea>
                                                 </div>
 

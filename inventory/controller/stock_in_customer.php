@@ -1,5 +1,8 @@
 <?php 
     include 'global_function.php';
+    include_once 'dompdf/autoload.inc.php'; 
+    use Dompdf\Dompdf;
+    use Dompdf\Options;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     {
@@ -237,7 +240,52 @@
             }
         } elseif($action == 'export'){
 
-            $query =  ' where a.deleted_at IS NULL AND c.deleted_at IS NULL';
+            $emp_id = $_SESSION['emp_id'];
+
+            $query =  ' where a.deleted_at IS NULL AND c.deleted_at IS NULL and a.stakeholder_id ='.$emp_id;
+
+            $month = isset($_GET["month"]) ? $_GET["month"] : null;
+
+            $stakeholder = isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null;
+        
+            if(isset($_GET["month"]) ? $_GET["month"] : null ){
+                $query = $query." AND MONTH(a.date) = ".$_GET['month'];
+            }
+
+            if(isset($_GET["year"]) ? $_GET["year"] : null ){
+                $query = $query." AND YEAR(a.created_at) = ".$_GET['year'];
+            }
+
+            $filename = date("Y-m-d")."-stock_in_customer.csv";
+
+            header('Content-Type: text/csv; charset=utf-8');  
+            header("Content-Disposition: attachment;  filename=\"$filename\"");
+            $output = fopen("php://output", "w");  
+            fputcsv($output, array('Stakeholder', 'Reference Number', 'Date', 'Remark','Product Name','Quantity','Price per unit (RM)','Total (RM)','Status'));
+
+            $query = "SELECT b.f_first_name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.buy_price, SUM(c.quantity * d.buy_price) AS total, e.name 
+            from inv_stock_in_customer AS a 
+            LEFT JOIN employees AS b ON a.stakeholder_id = b.f_id 
+            LEFT JOIN inv_stock_in_product_customer AS c ON a.id = c.stock_in_customer_id 
+            LEFT JOIN inv_product AS d ON c.product_id = d.id 
+            LEFT JOIN inv_status as e ON a.status = e.id 
+            $query
+            GROUP BY b.f_first_name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.buy_price, e.name";  
+            
+            $result = $conn->query($query);
+            
+            while($row = mysqli_fetch_assoc($result))  
+            {  
+                fputcsv($output, $row);  
+            }  
+            fclose($output);  
+
+        }elseif($action == 'exportPdf'){
+
+            $emp_id = $_SESSION['emp_id'];
+            $comp_id = $_SESSION['company'];
+
+            $query =  " where a.deleted_at IS NULL and a.company_id = '$comp_id' and a.created_by= ". $emp_id;
 
             $month = isset($_GET["month"]) ? $_GET["month"] : null;
 
@@ -251,35 +299,99 @@
                 $query = $query." AND YEAR(a.created_at) = ".$_GET['year'];
             }
             
-            if(isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null ){
-                $query = $query." AND a.stakeholder_id = ".$_GET['stakeholder'];
-            }
-
-            $filename = date("Y-m-d")."-stock_out.csv";
-
-            header('Content-Type: text/csv; charset=utf-8');  
-            header("Content-Disposition: attachment;  filename=\"$filename\"");
-            $output = fopen("php://output", "w");  
-            fputcsv($output, array('Stakeholder', 'Reference Number', 'Date', 'Remark','Product Name','Quantity','Price per unit (RM)','Total (RM)','Status'));
-
-            $query = "SELECT b.name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.sales_price, SUM(c.quantity * d.sales_price) AS total, e.name
-            from inv_stock_in_customer AS a
-            LEFT JOIN inv_contact AS b ON a.stakeholder_id = b.id
-            LEFT JOIN inv_stock_in_product_customer AS c ON a.id = c.stock_out_id
-            LEFT JOIN inv_product AS d ON c.product_id = d.id
-            LEFT JOIN inv_status as e ON a.status = e.id
+            $query = "SELECT b.f_first_name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.buy_price, SUM(c.quantity * d.buy_price) AS total, e.name 
+            from inv_stock_in_customer AS a 
+            LEFT JOIN employees AS b ON a.stakeholder_id = b.f_id 
+            LEFT JOIN inv_stock_in_product_customer AS c ON a.id = c.stock_in_customer_id 
+            LEFT JOIN inv_product AS d ON c.product_id = d.id 
+            LEFT JOIN inv_status as e ON a.status = e.id 
             $query
-            GROUP BY b.name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.sales_price, e.name";  
+            GROUP BY b.f_first_name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.buy_price, e.name";
             
-
             $result = $conn->query($query);
             
-            while($row = mysqli_fetch_assoc($result))  
-            {  
-                fputcsv($output, $row);  
-            }  
-            fclose($output);  
+            $query_company = "SELECT * 
+                                FROM company
+                                WHERE f_id =$comp_id";
+            $result_company = $conn->query($query_company);
+            $row_company = mysqli_fetch_assoc($result_company);
+       
+            $html =  '<table width=100%>
+                        <tr>
+                            <td width=100 align=center ><img width="100" src="http://'.$_SERVER['HTTP_HOST'].'/admin/assets/img/avatars/'.$row_company['f_logo'].'" ></td>
+                            <td colspan=8>
+                                <ul class="list-unstyled text-center" style="list-style: none; text-align: LEFT; padding-right: 3;font-family: sans-serif">
+                                    <li><b>'.$row_company['f_company_name'].'</b></li>
+                                    <li>'.$row_company['f_address_1'].'</li>
+                                    <li>'.$row_company['f_address_2'].'</li>
+                                    <li>'.$row_company['f_address_3'].'</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=9 align=center style="font-family: sans-serif; min-height: 5px; padding: 5px; margin-bottom: 10px;background-color: #f5f5f5;border: 1px solid #e3e3e3; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05); box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05)">Stock In</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <table width=100% border=1 style="border-collapse: collapse;">
+                        <tr>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>No</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Stakeholder Name</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Reference Number</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Date</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Remark</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Product Name</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Quantity</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Price per unit (RM)</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Total (RM)</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Status</b></td>
+                        </tr>';
 
+                        // Query from mysql 
+                        if (mysqli_num_rows($result) > 0) {
+                            $x = 0;
+                            while ($row = mysqli_fetch_assoc($result)) {
+                            $x += 1;
+                            $stakeholder_name = $row['stakeholder_name'];
+                            $reference_number = $row['reference_number'];
+                            $date = date("d/m/Y", strtotime($row['date']));
+                            $remark = $row['remark'];
+                            $product_name = $row['product_name'];
+                            $quantity = $row['quantity'];
+                            $buy_price = $row['buy_price'];
+                            $total = $row['total'];
+                            $name = $row['name'];
+
+                            $html .= '<tr border=1>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$x.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$stakeholder_name.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$reference_number.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$date.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$remark.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$product_name.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$quantity.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$buy_price.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$total.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$name.'</td>
+                                    </tr>';
+                            }
+                        }
+
+                        $html .= '</table>
+                                  <table>
+                                    <tr>
+                                        <td><tr>
+                                        <td colspan=9 style="font-family: sans-serif"><h6><b>Notes: This is a computer generated document and no signature required</b></h6></td>
+                                    </tr>
+                                </table>';
+
+                        $dompdf = new Dompdf(array('enable_remote' => true));
+
+                        $dompdf->load_html($html);
+
+                        $dompdf->render();
+                        $dompdf->stream("Stock In Customer.pdf",array("Attachment"=>0));
+                        $dompdf->clear();
         }
     }
 

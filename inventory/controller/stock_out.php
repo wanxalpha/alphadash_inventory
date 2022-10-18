@@ -1,5 +1,8 @@
 <?php 
     include 'global_function.php';
+    include_once 'dompdf/autoload.inc.php'; 
+    use Dompdf\Dompdf;
+    use Dompdf\Options;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     {
@@ -26,27 +29,46 @@
                 $timestamp = date('Y-m-d H:i:s');
             }
 
-            $sql = "INSERT INTO inv_stock_out (company_id,stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
-            VALUES ('$comp_id', '$_POST[stakeholder_id]','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
-
-            $result = $conn->query($sql);
-
-            $lastInsert = $conn->insert_id;
-
             $products = $_POST['product_list'];
             
+            $error = 0;
+
             foreach ($products as $key => $product) {
 
                 $product_id = $product['product_id'];
                 $quantity = $product['quantity'];
-                // $expired_date = $product['expired_date'];
-                
-                $sql_product = "INSERT INTO inv_stock_out_product (stock_out_id,product_id,quantity,created_by,created_at) 
-                VALUES ('$lastInsert','$product_id','$quantity',$emp_id,current_timestamp())";
 
-                $result = $conn->query($sql_product);
-                echo($result);
-                // exit();
+                $sql_current_stock = "SELECT * FROM inv_available_stock where product_id='$product_id'";
+                $result_current_stock = mysqli_query($conn, $sql_current_stock);
+                $stock = $result_current_stock->fetch_assoc();
+
+                if($quantity > $stock['quantity']){
+                    $error += 1;
+                }
+            }
+
+            if($error != 0){
+                postActionFailed('failed_stock_out_quantity',header('Location: ' . $_SERVER["HTTP_REFERER"] ));
+                exit();
+            }else{
+                $sql = "INSERT INTO inv_stock_out (company_id,stakeholder_id,reference_number,date,remark,attachment,created_by,created_at) 
+                VALUES ('$comp_id', '$_POST[stakeholder_id]','$_POST[reference_number]','$_POST[date]','$_POST[remark]','$path_location',$emp_id,current_timestamp())";
+
+                $result = $conn->query($sql);
+
+                $lastInsert = $conn->insert_id;
+
+                foreach ($products as $key => $product) {
+
+                    $product_id = $product['product_id'];
+                    $quantity = $product['quantity'];
+
+                    $sql_product = "INSERT INTO inv_stock_out_product (stock_out_id,product_id,quantity,created_by,created_at) 
+                    VALUES ('$lastInsert','$product_id','$quantity',$emp_id,current_timestamp())";
+
+                    $result = $conn->query($sql_product);
+                    // echo($result);
+                }
             }
     
             $sql = null;
@@ -56,7 +78,7 @@
             $emp_id = $_SESSION['emp_id'];
 
             if(isset($_FILES['attachment'])){
-                echo('masuk a');
+             
                 $attachment = $_FILES['attachment'];
                 
                 $fileTmpPath = $attachment['tmp_name'];
@@ -75,39 +97,62 @@
                 $path_location = $_POST['attachment'];
             }
 
-            $sql = "UPDATE inv_stock_out SET stakeholder_id='$_POST[stakeholder_id]',reference_number='$_POST[reference_number]',date='$_POST[date]',remark='$_POST[remark]',attachment='$path_location',
-                    updated_at=current_timestamp(),updated_by='$emp_id'
-                    WHERE id='$_POST[id]'";
-
-            $result = $conn->query($sql);
-
-            $products = $_POST['product_list'];
+            $error = 0;
             
+            $products = $_POST['product_list'];
+
             foreach ($products as $key => $product) {
 
                 $product_id = $product['product_id'];
                 $quantity = $product['quantity'];
 
-                $sql_product = "INSERT INTO inv_stock_out_product (stock_out_id,product_id,quantity,created_by,created_at) 
-                VALUES ('$_POST[id]','$product_id','$quantity',$emp_id,current_timestamp())";
+                $sql_current_stock = "SELECT * FROM inv_available_stock where product_id='$product_id'";
+                $result_current_stock = mysqli_query($conn, $sql_current_stock);
+                $stock = $result_current_stock->fetch_assoc();
 
-                $result = $conn->query($sql_product);
+                if($quantity > $stock['quantity']){
+                    $error += 1;
+                }
+            }
+// echo($error);exit();
+            if($error != 0){
+                postActionFailed('failed_stock_out_quantity',header('Location: ' . $_SERVER["HTTP_REFERER"] ));
+                exit();
+            }else{
+                $sql = "UPDATE inv_stock_out SET stakeholder_id='$_POST[stakeholder_id]',reference_number='$_POST[reference_number]',date='$_POST[date]',remark='$_POST[remark]',attachment='$path_location',
+                        updated_at=current_timestamp(),updated_by='$emp_id'
+                        WHERE id='$_POST[id]'";
 
-                $sql_available_stock = "SELECT * FROM inv_available_stock where product_id='$product_id'";
-                $result_available_stock = mysqli_query($conn, $sql_available_stock);
-                $stock = $result_available_stock->fetch_assoc();
+                $result = $conn->query($sql);
+
                 
-                if($stock['product_id']){
-                    $available_quantity = $stock['quantity'] + $quantity;
+                
+                foreach ($products as $key => $product) {
 
-                    $sql_update_available_stock = "UPDATE inv_available_stock  SET quantity='$available_quantity' WHERE product_id='$product_id'";
+                    $product_id = $product['product_id'];
+                    $quantity = $product['quantity'];
 
-                    $result = $conn->query($sql_update_available_stock);
-                }else{
-                    $sql_add_available_stock = "INSERT INTO inv_available_stock (product_id,quantity) 
-                    VALUES ('$product_id','$quantity')";
+                    $sql_product = "INSERT INTO inv_stock_out_product (stock_out_id,product_id,quantity,created_by,created_at) 
+                    VALUES ('$_POST[id]','$product_id','$quantity',$emp_id,current_timestamp())";
 
-                    $result = $conn->query($sql_add_available_stock);
+                    $result = $conn->query($sql_product);
+
+                    // $sql_available_stock = "SELECT * FROM inv_available_stock where product_id='$product_id'";
+                    // $result_available_stock = mysqli_query($conn, $sql_available_stock);
+                    // $stock = $result_available_stock->fetch_assoc();
+                    
+                    // if($stock['product_id']){
+                    //     $available_quantity = $stock['quantity'] + $quantity;
+
+                    //     $sql_update_available_stock = "UPDATE inv_available_stock  SET quantity='$available_quantity' WHERE product_id='$product_id'";
+
+                    //     $result = $conn->query($sql_update_available_stock);
+                    // }else{
+                    //     $sql_add_available_stock = "INSERT INTO inv_available_stock (product_id,quantity) 
+                    //     VALUES ('$product_id','$quantity')";
+
+                    //     $result = $conn->query($sql_add_available_stock);
+                    // }
                 }
             }
         }
@@ -265,14 +310,14 @@
             $output = fopen("php://output", "w");  
             fputcsv($output, array('Stakeholder', 'Reference Number', 'Date', 'Remark','Product Name','Quantity','Price per unit (RM)','Total (RM)','Status'));
 
-            $query = "SELECT b.name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.sales_price, SUM(c.quantity * d.sales_price) AS total, e.name
+            $query = "SELECT b.f_first_name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.sales_price, SUM(c.quantity * d.sales_price) AS total, e.name
             from inv_stock_out AS a
-            LEFT JOIN inv_contact AS b ON a.stakeholder_id = b.id
+            LEFT JOIN employees AS b ON a.stakeholder_id = b.f_id
             LEFT JOIN inv_stock_out_product AS c ON a.id = c.stock_out_id
             LEFT JOIN inv_product AS d ON c.product_id = d.id
             LEFT JOIN inv_status as e ON a.status = e.id
             $query
-            GROUP BY b.name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.sales_price, e.name";  
+            GROUP BY b.f_first_name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.sales_price, e.name";  
             
 
             $result = $conn->query($query);
@@ -283,6 +328,124 @@
             }  
             fclose($output);  
 
+        }elseif($action == 'exportPdf'){
+
+            $emp_id = $_SESSION['emp_id'];
+            $comp_id = $_SESSION['company'];
+
+            $query =  ' where a.deleted_at IS NULL AND c.deleted_at IS NULL';
+
+            $month = isset($_GET["month"]) ? $_GET["month"] : null;
+
+            $stakeholder = isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null;
+        
+            if(isset($_GET["month"]) ? $_GET["month"] : null ){
+                $query = $query." AND MONTH(a.date) = ".$_GET['month'];
+            }
+
+            if(isset($_GET["year"]) ? $_GET["year"] : null ){
+                $query = $query." AND YEAR(a.created_at) = ".$_GET['year'];
+            }
+            
+            if(isset($_GET["stakeholder"]) ? $_GET["stakeholder"] : null ){
+                $query = $query." AND a.stakeholder_id = ".$_GET['stakeholder'];
+            }
+
+            $query = "SELECT b.f_first_name AS stakeholder_name, a.reference_number, a.date, a.remark, d.name AS product_name, c.quantity, d.sales_price, SUM(c.quantity * d.sales_price) AS total, e.name
+            from inv_stock_out AS a
+            LEFT JOIN employees AS b ON a.stakeholder_id = b.f_id
+            LEFT JOIN inv_stock_out_product AS c ON a.id = c.stock_out_id
+            LEFT JOIN inv_product AS d ON c.product_id = d.id
+            LEFT JOIN inv_status as e ON a.status = e.id
+            $query
+            GROUP BY b.f_first_name,a.reference_number,a.date, a.remark, d.name, c.quantity, d.sales_price, e.name";  
+
+            // echo($query);exit();
+
+            $result = $conn->query($query);
+            
+            $query_company = "SELECT * 
+                                FROM company
+                                WHERE f_id =$comp_id";
+            $result_company = $conn->query($query_company);
+            $row_company = mysqli_fetch_assoc($result_company);
+       
+            $html =  '<table width=100%>
+                        <tr>
+                            <td width=100 align=center ><img width="100" src="http://'.$_SERVER['HTTP_HOST'].'/admin/assets/img/avatars/'.$row_company['f_logo'].'" ></td>
+                            <td colspan=8>
+                                <ul class="list-unstyled text-center" style="list-style: none; text-align: LEFT; padding-right: 3;font-family: sans-serif">
+                                    <li><b>'.$row_company['f_company_name'].'</b></li>
+                                    <li>'.$row_company['f_address_1'].'</li>
+                                    <li>'.$row_company['f_address_2'].'</li>
+                                    <li>'.$row_company['f_address_3'].'</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=9 align=center style="font-family: sans-serif; min-height: 5px; padding: 5px; margin-bottom: 10px;background-color: #f5f5f5;border: 1px solid #e3e3e3; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05); box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05)">Stock Out</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <table width=100% border=1 style="border-collapse: collapse;">
+                        <tr>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>No</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Stakeholder Name</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Reference Number</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Date</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Remark</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Product Name</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Quantity</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Price per unit (RM)</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Total (RM)</b></td>
+                            <td style="font-size:11px; text-align: center; font-family: sans-serif"><b>Status</b></td>
+                        </tr>';
+
+                        // Query from mysql 
+                        if (mysqli_num_rows($result) > 0) {
+                            $x = 0;
+                            while ($row = mysqli_fetch_assoc($result)) {
+                            $x += 1;
+                            $stakeholder_name = $row['stakeholder_name'];
+                            $reference_number = $row['reference_number'];
+                            $date = date("d/m/Y", strtotime($row['date']));
+                            $remark = $row['remark'];
+                            $product_name = $row['product_name'];
+                            $quantity = $row['quantity'];
+                            $sales_price = $row['sales_price'];
+                            $total = $row['total'];
+                            $name = $row['name'];
+
+                            $html .= '<tr border=1>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$x.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$stakeholder_name.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$reference_number.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$date.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$remark.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$product_name.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$quantity.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$sales_price.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$total.'</td>
+                                        <td style="font-size:11px; text-align: center; font-family: sans-serif">'.$name.'</td>
+                                    </tr>';
+                            }
+                        }
+
+                        $html .= '</table>
+                                  <table>
+                                    <tr>
+                                        <td><tr>
+                                        <td colspan=9 style="font-family: sans-serif"><h6><b>Notes: This is a computer generated document and no signature required</b></h6></td>
+                                    </tr>
+                                </table>';
+
+                        $dompdf = new Dompdf(array('enable_remote' => true));
+
+                        $dompdf->load_html($html);
+
+                        $dompdf->render();
+                        $dompdf->stream("Stock Out Customer.pdf",array("Attachment"=>0));
+                        $dompdf->clear();
         }
     }
 

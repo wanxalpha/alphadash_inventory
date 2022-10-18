@@ -98,11 +98,25 @@
         
         elseif($action == 'delete')
         {
-            $sql = "UPDATE inv_product  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+            $sql_product = "SELECT * FROM inv_available_stock WHERE product_id='$_POST[id]'";
+            $result_product = mysqli_query($conn, $sql_product);
 
-            postActionAjax('Product',$sql);
+            $count_product = 0;
+            while ($row_product = mysqli_fetch_array($result_product)){
+                $count_product = $row_product['quantity'];
+            }
 
-            echo json_encode(['url' => '../product/index.php' , 'status'=>'success']);
+            if($count_product != 0){
+                postActionAjaxFailed('failed_delete_product');
+
+                echo json_encode(['url' => '../product/index.php' , 'status'=>'success']);
+            }else{
+                $sql = "UPDATE inv_product  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+
+                postActionAjax('Product',$sql);
+
+                echo json_encode(['url' => '../product/index.php' , 'status'=>'success']);
+            }
         }
 
         postAction('Product',$action,$sql,"Location:../resource/product/index.php");

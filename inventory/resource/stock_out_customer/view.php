@@ -51,6 +51,13 @@
                                         autofocus readonly=true disabled=true />
                                     </div>
 
+                                    <div class="mb-3 col-md-3">
+                                        <label for="delivery_date" class="form-label">Delivery Date</label>
+                                        <input class="form-control" type="date" id="delivery_date"
+                                        name="delivery_date" value="<?php echo $row['delivery_date'] ?>"
+                                        autofocus readonly=true disabled=true />
+                                    </div>
+
                                     <div class="mb-2 col-md-2">
                                         <label for="low_quantity_alert" class="form-label">Attachment</label>
                                         <input class="form-control" style="display:inline;" type="text" name="attachment" id="attachment" value="<?php echo $row['attachment']?>" readonly=true disabled=true/>

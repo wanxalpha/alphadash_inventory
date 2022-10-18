@@ -2,7 +2,6 @@
     include_once('../../controller/stock_out.php');
     include_once("../../layouts/menu.php");
 
-    $product = getProduct();
     $stakeholder = getCustomer();
 ?>
 

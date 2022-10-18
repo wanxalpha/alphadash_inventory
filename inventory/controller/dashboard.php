@@ -1,18 +1,22 @@
 <?php 
     include 'global_function.php';
     include_once('Lookup/FunnelStatus.php');
+    include_once('Lookup/StockReturnStatus.php');
     include_once('Lookup/ProjectSector.php');
     include_once('Lookup/SoftDelete.php');
 
 
     $data_kpi = getKPISalesPerson();
     $data_team_kpi = getKPISalesTeam();
-    $data_funnel_status = getStatusFunnel();
+    $data_stock_in = getStockIn();
+    $data_stock_out = getStockOut();
+    $data_stock_in_customer = getStockInCustomer();
+    $data_stock_out_customer = getStockOutCustomer();
+    $data_stock_return = getStockReturn();
     $data_funnel_category = getCategoryFunnel();
     $data_pillar = calculatePillar();
     $data_pillar_increase = calculatePillar(true);
     $data_calendar = Calendar();
-
     $purchase_details = purchaseDetails();
     $low_quantity_alert = lowQuantityAlert();
 
@@ -337,10 +341,86 @@
         return $data_kpi;
     }
 
-    function getStatusFunnel(){
+    function getStockIn(){
         global $conn;
 
-        $potential = $closed = $kiv = $loss = 0;
+        $open = $validated = 0;
+
+        $comp_id = $_SESSION['company'];
+
+        $role = $_SESSION['role'] == 'User' ? ' WHERE employee_id='.$_SESSION['emp_id'] : null;
+
+        $month = isset($_GET['stock_in_month']) ?  $_GET['stock_in_month'] : null ;
+
+        $year = isset($_GET['stock_in_year']) ? $_GET['stock_in_year'] : date('Y');
+
+        if($_SESSION['designation'] == '3'){
+            $query = ' WHERE company_id='.$comp_id.' and stakeholder_id='.$_SESSION['emp_id'].' and deleted_at IS NULL';
+        }else{
+            $query = ' WHERE company_id='.$comp_id.' and deleted_at IS NULL';
+        }
+
+        if($month){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%m') = $month ";
+        }
+
+        if($year){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%Y') = $year ";
+        } 
+
+        $sql = "SELECT status FROM inv_stock_in $query";
+        
+        $result = mysqli_query($conn, $sql);
+
+        while ($row = mysqli_fetch_array($result)) { 
+
+            if($row['status'] ==  '0') $open += 1;
+
+            elseif($row['status'] ==  '1') $validated += 1;
+        }
+
+        return [$open,$validated];
+    }
+
+    function getStockInCustomer(){
+        global $conn;
+
+        $open = $validated = 0;
+
+        $comp_id = $_SESSION['company'];
+
+        $month = isset($_GET['stock_in_month_customer']) ?  $_GET['stock_in_month_customer'] : null ;
+
+        $year = isset($_GET['stock_in_year_customer']) ? $_GET['stock_in_year_customer'] : date('Y');
+
+        $query = ' WHERE company_id='.$comp_id.' and stakeholder_id='.$_SESSION['emp_id'].' and deleted_at IS NULL';
+
+        if($month){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%m') = $month ";
+        }
+
+        if($year){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%Y') = $year ";
+        } 
+
+        $sql = "SELECT status FROM inv_stock_in_customer $query";
+       
+        $result = mysqli_query($conn, $sql);
+
+        while ($row = mysqli_fetch_array($result)) { 
+
+            if($row['status'] ==  '0') $open += 1;
+
+            elseif($row['status'] ==  '1') $validated += 1;
+        }
+
+        return [$open,$validated];
+    }
+    
+    function getStockOut(){
+        global $conn;
+
+        $open = $validated = 0;
 
         $comp_id = $_SESSION['company'];
 
@@ -350,9 +430,8 @@
 
         $year = isset($_GET['status_year']) ? $_GET['status_year'] : date('Y');
 
-        $product = isset($_GET['status_product']) ?  $_GET['status_product'] : null ;
 
-        $query = ' WHERE f_id_com='.$comp_id;
+        $query = ' WHERE company_id='.$comp_id.' and deleted_at IS NULL';
 
         if($month){
             $query = $query." AND DATE_FORMAT(`created_at`, '%m') = $month ";
@@ -360,32 +439,99 @@
 
         if($year){
             $query = $query." AND DATE_FORMAT(`created_at`, '%Y') = $year ";
-        }
+        } 
 
-        if($product){
-            $query = $query." AND project_pillar LIKE '%$product%' ";
-        }
-
-        if($_SESSION['role'] == 'User'){
-            $query = $query." AND employee_id=".$_SESSION['emp_id'];
-        }
-
-        $sql = "SELECT status FROM sales_funnel $query";
+        $sql = "SELECT status FROM inv_stock_out $query";
         
         $result = mysqli_query($conn, $sql);
 
         while ($row = mysqli_fetch_array($result)) { 
 
-            if($row['status'] ==  FunnelStatus::POTENTIAL) $potential += 1;
+            if($row['status'] ==  '0') $open += 1;
 
-            elseif($row['status'] ==  FunnelStatus::CLOSED) $closed += 1;
-
-            elseif($row['status'] ==  FunnelStatus::KIV) $kiv += 1;
-
-            elseif($row['status'] ==  FunnelStatus::LOSS) $loss += 1;
+            elseif($row['status'] ==  '1') $validated += 1;
         }
 
-        return [$potential,$closed,$kiv,$loss];
+        return [$open,$validated];
+    }
+
+    function getStockOutCustomer(){
+        global $conn;
+
+        $open = $validated = 0;
+
+        $comp_id = $_SESSION['company'];
+
+        $month = isset($_GET['stock_out_month_customer']) ?  $_GET['stock_out_month_customer'] : null ;
+
+        $year = isset($_GET['stock_out_year_customer']) ? $_GET['stock_out_year_customer'] : date('Y');
+
+        $query = ' WHERE company_id='.$comp_id.' and created_by='.$_SESSION['emp_id'].' and deleted_at IS NULL';
+
+        if($month){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%m') = $month ";
+        }
+
+        if($year){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%Y') = $year ";
+        } 
+
+        $sql = "SELECT status FROM inv_stock_out_customer $query";
+        
+        $result = mysqli_query($conn, $sql);
+
+        while ($row = mysqli_fetch_array($result)) { 
+
+            if($row['status'] ==  '0') $open += 1;
+
+            elseif($row['status'] ==  '1') $validated += 1;
+        }
+
+        return [$open,$validated];
+    }
+
+    function getStockReturn(){
+        global $conn;
+
+        $open = $validated = $returned = 0;
+
+        $comp_id = $_SESSION['company'];
+
+        $role = $_SESSION['role'] == 'User' ? ' WHERE employee_id='.$_SESSION['emp_id'] : null;
+
+        $month = isset($_GET['stock_return_month']) ?  $_GET['stock_return_month'] : null ;
+
+        $year = isset($_GET['stock_return_year']) ? $_GET['stock_return_year'] : date('Y');
+
+
+        if($_SESSION['designation'] == '3'){
+            $query = ' WHERE company_id='.$comp_id.' and stakeholder_id='.$_SESSION['emp_id'].' and deleted_at IS NULL';
+        }else{
+            $query = ' WHERE company_id='.$comp_id.' and deleted_at IS NULL';
+        }
+
+        if($month){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%m') = $month ";
+        }
+
+        if($year){
+            $query = $query." AND DATE_FORMAT(`created_at`, '%Y') = $year ";
+        } 
+
+        $sql = "SELECT status FROM inv_refund $query";
+       
+        $result = mysqli_query($conn, $sql);
+
+        while ($row = mysqli_fetch_array($result)) { 
+
+            if($row['status'] ==  '0') $open += 1;
+
+            elseif($row['status'] ==  '1') $validated += 1;
+
+            elseif($row['status'] ==  '2') $returned += 1;
+        }
+
+        return [$open,$validated,$returned];
     }
 
     function getCategoryFunnel(){

@@ -18,17 +18,43 @@
         }
         elseif($action == 'update')
         {
-            $sql = "UPDATE inv_product_category  SET name='$_POST[name]',remark='$_POST[remark]',updated_by=$emp_id,updated_at=current_timestamp() WHERE id='$_POST[id]'";
+            $sql_product = "SELECT * FROM inv_product WHERE product_category_id='$_POST[id]' AND deleted_at IS NULL";
+            $result_product = mysqli_query($conn, $sql_product);
 
-            postAction('Product Category',$action,$sql,"Location:../resource/product_category/index.php");
+            $count_row = 0;
+            while ($row_product = mysqli_fetch_array($result_product)){
+                $count_row += 1;
+            }
+
+            if($count_row != 0){
+                postActionFailed('failed_update_product_category',"Location:../resource/product_category/index.php");
+            }else{
+                $sql = "UPDATE inv_product_category  SET name='$_POST[name]',remark='$_POST[remark]',updated_by=$emp_id,updated_at=current_timestamp() WHERE id='$_POST[id]'";
+
+                postAction('Product Category',$action,$sql,"Location:../resource/product_category/index.php");
+            }
         }
         elseif($action == 'delete')
         {
-            $sql = "UPDATE inv_product_category  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+            $sql_product = "SELECT * FROM inv_product WHERE product_category_id='$_POST[id]' AND deleted_at IS NULL";
+            $result_product = mysqli_query($conn, $sql_product);
 
-            postActionAjax('Product Category',$sql);
+            $count_row = 0;
+            while ($row_product = mysqli_fetch_array($result_product)){
+                $count_row += 1;
+            }
 
-            echo json_encode(['url' => '../product_category/index.php' , 'status'=>'success']);
+            if($count_row != 0){
+                postActionAjaxFailed('failed_update_product_category');
+
+                echo json_encode(['url' => '../product_category/index.php' , 'status'=>'success']);
+            }else{
+                $sql = "UPDATE inv_product_category  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+
+                postActionAjax('Product Category',$sql);
+
+                echo json_encode(['url' => '../product_category/index.php' , 'status'=>'success']);
+            }
         }
        
         

@@ -268,20 +268,21 @@
 
         });
 
-        // $(".quantity").change(function() { 
-        //     console.log($(this).val());
+        $(".quantity").change(function() { 
+            console.log($(this).val());
             
-        //     var current_quantity = $('.temp_quantity').val();
+            var request_quantity = parseInt($(this).val());
+            var current_quantity = parseInt($('.temp_quantity').val());
 
-        //     if($(this).val() > current_quantity){
-        //         $('.quantity').val("");
-        //         Swal.fire({
-        //             icon: 'warning',
-        //             title: 'Ops...',
-        //             text: 'Exceeded available stock',
-        //             timer: 20000,
-        //         })
-        //     }
-        // });
+            if(request_quantity > current_quantity){
+                $('.quantity').val("");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ops...',
+                    text: 'Exceeded available stock',
+                    timer: 20000,
+                })
+            }
+        });
     });
 </script>

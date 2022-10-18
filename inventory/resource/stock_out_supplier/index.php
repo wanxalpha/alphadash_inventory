@@ -41,6 +41,7 @@
         <button id="search" style="float:bottom;" class="btn btn-primary form-control">Search</button>
       </div>
       <div class="col-md-6" align='right'>
+      <button class="btn btn-primary" id="btn_export_pdf" >Export PDF</button>
       <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
         &nbsp;
         <a href="../stock_out_supplier/create.php" class="btn btn-primary">Add Stock Out</a>  

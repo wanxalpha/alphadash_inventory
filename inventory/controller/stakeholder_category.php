@@ -17,17 +17,44 @@
         }
         elseif($action == 'update')
         {
-            $sql = "UPDATE inv_stakeholder_category  SET name='$_POST[name]',remark='$_POST[remark]',updated_by=$emp_id,updated_at=current_timestamp() WHERE id='$_POST[id]'";
+            $sql_employees = "SELECT * FROM employees WHERE f_designation ='$_POST[id]' and f_delete = 'N'";
+            $result_employees = mysqli_query($conn, $sql_employees);
 
-            postAction('Stakeholder Category',$action,$sql,"Location:../resource/stakeholder_category/index.php");
+            $count_row = 0;
+            while ($row_employees = mysqli_fetch_array($result_employees)){
+                $count_row += 1;
+            }
+
+            if($count_row != 0){
+                postActionFailed('failed_update_stakeholder',"Location:../resource/stakeholder_category/index.php");
+            }else{
+
+                $sql = "UPDATE inv_stakeholder_category  SET name='$_POST[name]',remark='$_POST[remark]',updated_by=$emp_id,updated_at=current_timestamp() WHERE id='$_POST[id]'";
+
+                postAction('Stakeholder Category',$action,$sql,"Location:../resource/stakeholder_category/index.php");
+            }
         }
         elseif($action == 'delete')
         {
-            $sql = "UPDATE inv_stakeholder_category  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+            $sql_employees = "SELECT * FROM employees WHERE f_designation ='$_POST[id]' and f_delete = 'N'";
+            $result_employees = mysqli_query($conn, $sql_employees);
 
-            postActionAjax('Stakeholder Category',$sql);
+            $count_row = 0;
+            while ($row_employees = mysqli_fetch_array($result_employees)){
+                $count_row += 1;
+            }
 
-            echo json_encode(['url' => '../stakeholder_category/index.php' , 'status'=>'success']);
+            if($count_row != 0){
+                postActionAjaxFailed('failed_update_stakeholder');
+
+                echo json_encode(['url' => '../stakeholder_category/index.php' , 'status'=>'success']);
+            }else{
+                $sql = "UPDATE inv_stakeholder_category  SET deleted_at=current_timestamp() where id='$_POST[id]'";
+
+                postActionAjax('Stakeholder Category',$sql);
+
+                echo json_encode(['url' => '../stakeholder_category/index.php' , 'status'=>'success']);
+            }
         }
        
         

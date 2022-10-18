@@ -2,7 +2,7 @@
     include_once('../../controller/stock_out.php');
     include_once("../../layouts/menu.php");
 
-    $product = getProduct();
+    $product = getProductMerchant();
     $stakeholder = getRetailer();
 ?>
 
@@ -73,34 +73,30 @@
                                         <div data-repeater-item class="row">
                                             <div class="mb-3 col-lg-3">
                                                 <label for="name" class="form-label">Product</label>
-                                                <select name="product_id" id="product_id" class="select2 form-select checkProduct">
+                                                <!-- <select name="product_id" id="product_id" class="select2 form-select" onChange="myFunction(this.options[this.selectedIndex].value)"> -->
+                                                <select name="product_id" id="product_id" class="select2 form-select">
                                                     <option hidden value=""> ---- Select Product ----</option>
                                                     <?php while ($prod = mysqli_fetch_array($product)) { ?>
-                                                    <option value="<?php echo $prod['id'] ?>"> <?php echo $prod['name'] ?>
+                                                    <option value="<?php echo $prod['id'] ?>"> <?php echo $prod['name'] ?> - <?php echo $prod['quantity'] ?>
                                                     </option>
                                                     <?php } ?>
                                                 </select>
                                             </div>
 
-                                            <div class="mb-3 col-lg-3">
+                                            <div class="mb-3 col-lg-3 quantity">
                                                 <label for="name" class="form-label">Quantity</label>
-                                                <input class="form-control quantity" type="number" name="quantity" id="quantity" />
-                                                <label for="name" class="form-label">Available Stock: </label>
-                                                <label for="name" class="form-label available_stock" id='available_stock'></label>
+                                                <input class="form-control quantity" type="number" name="quantity" id="quantity"/>
+                                                <!-- <label for="name" class="form-label">Available Stock: </label>
+                                                <label for="name" class="form-label available_stock" id='available_stock'></label> -->
                                             </div>
-
-                                            <!-- <div class="mb-3 col-lg-3">
-                                                <label for="name" class="form-label">Expired Date</label>
-                                                <input class="form-control" type="date" name="expired_date" id="expired_date" />
-                                            </div> -->
 
                                             <div class="mb-2 col-lg-2">
                                                 <label for="name" class="form-label">&nbsp;</label>
                                                     <input data-repeater-delete type="button" class="btn btn-primary form-control" 
                                                         value="Delete" />
                                             </div>
-
-                                            <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" />
+<!-- 
+                                            <input class="form-control temp_quantity" type="text" name="temp_quantity" id="temp_quantity" /> -->
 
                                         </div>
                                     </div>
@@ -126,9 +122,10 @@
 
 <script>
     $(document).ready(function () {
-        $( ".quantity" ).prop( "disabled", true );
+        // $( ".quantity" ).prop( "disabled", true );
         "use strict";
         $(".repeater").repeater({
+            isFirstItemUndeletable: true,
             defaultValues: {
                 "textarea-input": "foo",
                 "text-input": "bar",
@@ -138,49 +135,51 @@
             },
             show: function () {
                 $(this).slideDown();
-                console.log('new');
-                $('.checkProduct').on('change',function(){
-                    console.log('asf');
-                    var value = $(this).val();
-                    var url = "../../controller/stock_out.php";
-
-                    $.get(url, {
-                        action: 'stock-available',
-                        product_id:value,
-                    })
-                    .done(function (data) {
-                        if (data) {
-                            $('.available_stock').html(data);
-                            $('.temp_quantity').val(data);
-
-                        }
-                        if(data == '0'){
-                            $('.quantity').val("");
-                            $( ".quantity" ).prop( "disabled", true );
-                        }else{
-                            $( ".quantity" ).prop( "disabled", false );
-                        }
-                    })
+                // console.log('new');
+                // $('.checkProduct').on('change',function(){
+                //     console.log('asf444');
 
 
+                //     var value = $(this).val();
+                //     var url = "../../controller/stock_out.php";
 
-                });
+                //     $.get(url, {
+                //         action: 'stock-available',
+                //         product_id:value,
+                //     })
+                //     .done(function (data) {
+                //         if (data) {
+                //             $(this).closest('#available_stock').html(data);
+                //             $(this).closest('#temp_quantity').val(data);
 
-                $(".quantity").change(function() { 
-                    console.log($(this).val());
+                //         }
+                //         if(data == '0'){
+                //             $('#quantity').val("");
+                //             $( "#quantity" ).prop( "disabled", true );
+                //         }else{
+                //             $( "#quantity" ).prop( "disabled", false );
+                //         }
+                //     })
+                // });
+
+                // $(".quantity").change(function() { 
+                //     console.log($(this).val());
                     
-                    var current_quantity = $('.temp_quantity').val();
+                //     var available_quantity = $('.temp_quantity').val();
 
-                    if($(this).val() > current_quantity){
-                        $('.quantity').val("");
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Ops...',
-                            text: 'Exceeded available stock',
-                            timer: 20000,
-                        })
-                    }
-                });
+                //     var available_quantity = $(this).closest('.temp_quantity').val;
+                //     console.log(available_quantity);
+
+                //     if($(this).val() > available_quantity){
+                //         $('.quantity').val("");
+                //         Swal.fire({
+                //             icon: 'warning',
+                //             title: 'Ops...',
+                //             text: 'Exceeded available stock',
+                //             timer: 20000,
+                //         })
+                //     }
+                // });
             },
             hide: function (e) {
                 confirm("Are you sure you want to delete this record?") && $(this).slideUp(e)
@@ -212,6 +211,7 @@
 
         $('.checkProduct').on('change',function(){
             console.log('asf');
+
             var value = $(this).val();
             var url = "../../controller/stock_out.php";
 
@@ -221,15 +221,20 @@
             })
             .done(function (data) {
                 if (data) {
-                    $('.available_stock').html(data);
+                    // $('.available_stock').html(data);
                     $('.temp_quantity').val(data);
-
+                    // $(this).closest('.available_stock').html(data);
+                    // $(this).closest('.temp_quantity').val(data);
+                    // var val = $(this).closest("div.quantity").find("input[name='quantity']").val();
+                    // $(".quantity").find('input.quantity').val('1s11');
+                    $(".quantity").find('input.temp_quantity').html(data);
+                    $(".quantity").find('label.available_stock').html(data);
                 }
                 if(data == '0'){
                     $('.quantity').val("");
-                    $( ".quantity" ).prop( "disabled", true );
+                   $(".quantity").find('input.quantity').prop( "disabled", true );
                 }else{
-                    $( ".quantity" ).prop( "disabled", false );
+                   $(".quantity").find('input.quantity').prop( "disabled", false );
                 }
             })
 
@@ -237,20 +242,20 @@
 
         });
 
-        $(".quantity").change(function() { 
-            console.log($(this).val());
+        // $(".quantity").change(function() { 
             
-            var current_quantity = parseInt($('.temp_quantity').val());
+        //     var available_quantity = parseInt($('.temp_quantity').val());
 
-            if($(this).val() > current_quantity){
-                $('.quantity').val("");
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Ops...',
-                    text: 'Exceeded available stock',
-                    timer: 20000,
-                })
-            }
-        });
+        //     if($(this).val() > available_quantity){
+        //         $('.quantity').val("");
+        //         Swal.fire({
+        //             icon: 'warning',
+        //             title: 'Ops...',
+        //             text: 'Exceeded available stock',
+        //             timer: 20000,
+        //         })
+        //     }
+        // });
+
     });
 </script>

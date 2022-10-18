@@ -51,6 +51,13 @@
                                         autofocus required />
                                     </div>
 
+                                    <div class="mb-3 col-md-3">
+                                        <label for="delivery_date" class="form-label">Delivery Date</label>
+                                        <input class="form-control" type="date" id="delivery_date"
+                                        name="delivery_date" value="<?php echo $row['delivery_date'] ?>"
+                                        autofocus required />
+                                    </div>
+
                                     <div class="mb-2 col-md-2">
                                         <label for="low_quantity_alert" class="form-label">Attachment</label>
                                         <input class="form-control" style="display:inline;" type="file" name="attachment" id="attachment" value="<?php echo $row['attachment']?>"/>
@@ -97,9 +104,9 @@
 
                                                 <div class="mb-3 col-lg-3">
                                                     <label for="name" class="form-label">Quantity</label>
-                                                    <input class="form-control quantity" type="number" name="quantity" id="quantity" />
-                                                    <label for="name" class="form-label">Available Stock: </label>
-                                                    <label for="name" class="form-label available_stock" id='available_stock'></label>
+                                                    <input class="form-control" type="number" name="quantity" id="quantity" />
+                                                    <!-- <label for="name" class="form-label">Available Stock: </label>
+                                                    <label for="name" class="form-label available_stock" id='available_stock'></label> -->
                                                 </div>
 
                                                 <div class="mb-2 col-lg-2">
@@ -108,7 +115,7 @@
                                                             value="Delete" />
                                                 </div>
 
-                                                <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" />
+                                                <!-- <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" /> -->
                                             </div>
                                         </div>
                                     </div>
@@ -168,7 +175,7 @@
 
 <script>
     $(document).ready(function () {
-        $( ".quantity" ).prop( "disabled", true );
+        // $( ".quantity" ).prop( "disabled", true );
         "use strict";
         $(".repeater").repeater({
             defaultValues: {

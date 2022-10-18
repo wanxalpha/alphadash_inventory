@@ -2,7 +2,7 @@
     include_once('../../controller/stock_out_customer.php');
     include_once("../../layouts/menu.php");
 
-    $product = getProduct();
+    $product = getProductRetailer();
     $stakeholder = getCustomer();
 ?>
 
@@ -44,6 +44,11 @@
                                 </div>
 
                                 <div class="mb-3 col-md-3">
+                                    <label for="delivery_date" class="form-label">Delivery Date</label>
+                                    <input class="form-control" type="date" id="delivery_date" name="delivery_date" autofocus required />
+                                </div>
+
+                                <div class="mb-3 col-md-3">
                                     <label for="low_quantity_alert" class="form-label">Attachment</label>
                                     <input class="form-control" type="file" name="attachment" id="attachment" required />
                                 </div>
@@ -75,7 +80,7 @@
                                                 <select name="product_id" id="product_id" class="select2 form-select checkProduct">
                                                     <option hidden value=""> ---- Select Product ----</option>
                                                     <?php while ($prod = mysqli_fetch_array($product)) { ?>
-                                                    <option value="<?php echo $prod['id'] ?>"> <?php echo $prod['name'] ?>
+                                                    <option value="<?php echo $prod['id'] ?>"> <?php echo $prod['name'] ?> - <?php echo $prod['quantity'] ?>
                                                     </option>
                                                     <?php } ?>
                                                 </select>
@@ -83,9 +88,9 @@
 
                                             <div class="mb-3 col-lg-3">
                                                 <label for="name" class="form-label">Quantity</label>
-                                                <input class="form-control quantity" type="number" name="quantity" id="quantity" />
-                                                <label for="name" class="form-label">Available Stock: </label>
-                                                <label for="name" class="form-label available_stock" id='available_stock'></label>
+                                                <input class="form-control" type="number" name="quantity" id="quantity" />
+                                                <!-- <label for="name" class="form-label">Available Stock: </label>
+                                                <label for="name" class="form-label available_stock" id='available_stock'></label> -->
                                             </div>
 
                                             <div class="mb-2 col-lg-2">
@@ -94,7 +99,7 @@
                                                         value="Delete" />
                                             </div>
 
-                                            <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" />
+                                            <!-- <input class="form-control temp_quantity" type="hidden" name="temp_quantity" id="temp_quantity" /> -->
 
                                         </div>
                                     </div>
@@ -120,7 +125,7 @@
 
 <script>
     $(document).ready(function () {
-        $( ".quantity" ).prop( "disabled", true );
+        // $( ".quantity" ).prop( "disabled", true );
         "use strict";
         $(".repeater").repeater({
             defaultValues: {

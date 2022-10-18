@@ -7,13 +7,7 @@
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4">Stakeholder Category</h4>
     <div class="row mb-3">
-     
-      <div class="col-md-2">
-        <label class="form-label"> </label>
-
-        <button id="btn_search" style="float:bottom;" class="btn btn-primary form-control">Search</button>
-      </div>
-      <div class="col-md-10">
+      <div class="col-md-12">
         <a href="create.php" style="float:right;" class="btn btn-primary">Add Stakeholder Category</a>
       </div>
     </div>
@@ -41,7 +35,4 @@
 </div>
 
 <?php include_once("../../layouts/footer.php"); ?>
-<script>
-  var status = '<?php echo $_GET['status'] ?  $_GET['status'] + 1 : 1;  ?>';
-</script>
 <script type="text/javascript" src="../../assets/js/resource/stakeholder_category.js"> </script>

@@ -50,13 +50,41 @@ function postAction($type,$next_action,$sql,$route)
 
     elseif($result == true && $next_action == 'validate') $_SESSION["session_toast_message"] = 'Success Validated '.$type;
 
-    elseif($result == true && $next_action == 'retrieved') $_SESSION["session_toast_message"] = 'Success Retrieved '.$type;
+    elseif($result == true && $next_action == 'retrieved') $_SESSION["session_toast_message"] = 'Success Returned '.$type;
+
+    elseif($result == true && $next_action == 'failed_action') $_SESSION["session_toast_message"] = 'There is active employee(s) under this category';
 
     else $_SESSION["session_toast_message"] = 'Failed';
 
-    $_SESSION["session_toast_type"] = $result == true ? 'success' : 'error';
-    
+    if($next_action == 'failed_action'){
+        $_SESSION["session_toast_type"] = 'error';
+    }else{
+        $_SESSION["session_toast_type"] = $result == true ? 'success' : 'error';
+    }
     // echo $conn->error;
+    header($route);
+
+    return true;
+}
+
+function postActionFailed($next_action,$route)
+{   
+    if($next_action == 'failed_update_stakeholder') $_SESSION["session_toast_message"] = 'There is active employee(s) under this category';
+
+    elseif($next_action == 'failed_update_product_category') $_SESSION["session_toast_message"] = 'There is active product(s) under this category ';
+
+    elseif($next_action == 'failed_stock_out_quantity') $_SESSION["session_toast_message"] = 'Exceeded available product';
+
+    elseif($next_action == 'validate') $_SESSION["session_toast_message"] = 'Success Validated ';
+
+    elseif($next_action == 'retrieved') $_SESSION["session_toast_message"] = 'Success Returned ';
+
+    elseif($next_action == 'failed_action') $_SESSION["session_toast_message"] = 'There is active user(s) under this category';
+
+    else $_SESSION["session_toast_message"] = 'Failed';
+
+    $_SESSION["session_toast_type"] = 'error';
+    echo($next_action);exit();
     header($route);
 
     return true;
@@ -66,16 +94,35 @@ function postActionAjax($type,$sql){
 
     unset($_SESSION['session_toast_message']);
     unset($_SESSION['session_toast_type']);
-    
+
     global $conn;
+    if($sql){
+        $result = $conn->query($sql);
 
-    $result = $conn->query($sql);
+        if($result == true ) $_SESSION["session_toast_message"] = 'Success Delete '.$type;
 
-    if($result == true ) $_SESSION["session_toast_message"] = 'Success Delete '.$type;
+        else $_SESSION["session_toast_message"] = 'Delete Failed';
 
-    else $_SESSION["session_toast_message"] = 'Delete Failed';
+        $_SESSION["session_toast_type"] = $result == true ? 'success' : 'error';
+    }else{
+        $_SESSION["session_toast_message"] = 'Delete Failed';
 
-    $_SESSION["session_toast_type"] = $result == true ? 'success' : 'error';
+        $_SESSION["session_toast_type"] = 'error';
+    }
+        return true;
+
+}
+
+function postActionAjaxFailed($type){
+
+    unset($_SESSION['session_toast_message']);
+    unset($_SESSION['session_toast_type']);
+    
+    if($type == 'failed_update_stakeholder') $_SESSION["session_toast_message"] = 'There is active user(s) under this category';
+
+    elseif($type == 'failed_update_product_category') $_SESSION["session_toast_message"] = 'There is active product(s) under this category';
+
+    $_SESSION["session_toast_type"] = 'error';
 
     return true;
 
@@ -105,13 +152,28 @@ function getProductCategory(){
 
 }
 
-function getProduct(){
+function getProductMerchant(){
     global $conn;
     $comp_id = $_SESSION['company'];
 
-    $sql = "SELECT id,name 
-            FROM inv_product 
-            where deleted_at IS NULL and company_id = '$comp_id'";
+    $sql = "SELECT a.id,a.name,b.quantity 
+            FROM inv_product AS a
+            LEFT JOIN inv_available_stock AS b ON a.id = b.product_id 
+            where a.deleted_at IS NULL and a.company_id = '$comp_id' AND b.quantity IS NOT NULL";
+
+    return $result_product = mysqli_query($conn, $sql);
+
+}
+
+function getProductRetailer(){
+    global $conn;
+    $comp_id = $_SESSION['company'];
+    $emp_id = $_SESSION['emp_id'];
+
+    $sql = "SELECT a.id,a.name,b.quantity 
+            FROM inv_product AS a
+            LEFT JOIN inv_available_stock_customer AS b ON a.id = b.product_id 
+            where a.deleted_at IS NULL and b.stakeholder_id = '$emp_id' and a.company_id = '$comp_id' AND b.quantity IS NOT NULL";
 
     return $result_product = mysqli_query($conn, $sql);
 

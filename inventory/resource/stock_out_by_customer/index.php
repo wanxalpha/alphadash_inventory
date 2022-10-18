@@ -55,8 +55,8 @@
       </div>
       <div class="col-md-6" align='right'>
       <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
-        &nbsp;
-        <a href="../stock_out_by_customer/create.php" class="btn btn-primary">Add Stock In</a>  
+        <!-- &nbsp; -->
+        <!-- <a href="../stock_out_by_customer/create.php" class="btn btn-primary">Add Stock In</a>   -->
       </div>
     </div>
     <br>
