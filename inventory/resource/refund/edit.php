@@ -2,7 +2,7 @@
     include_once('../../controller/refund.php');
     include_once("../../layouts/menu.php");
 
-    $product = getProduct();
+    $product = getProductMerchant();
     $stakeholder = getSupplier();
 ?>
 

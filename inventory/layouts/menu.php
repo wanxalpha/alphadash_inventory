@@ -78,7 +78,7 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                 </div>
                 <div class="profile-card">
                     <div class="profile-image">
-                        <img alt="" src="../../../../<?php echo $file_role ?>/upload/profile/<?php echo $emp_pic ?>" style="border-radius:100%; height:100px; width:100px;">
+                        <img alt="" src="../../../<?php echo $file_role ?>/upload/profile/<?php echo $emp_pic ?>" style="border-radius:100%; height:100px; width:100px;">
                     </div>
                     <div class="profile-info">
                         <h3>
@@ -280,7 +280,7 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar">
-                                                        <img src="../../../../<?php echo $file_role ?>/upload/profile/<?php echo $emp_pic ?>" alt class="w-px-40 h-auto rounded-circle" />
+                                                        <img src="../../../<?php echo $file_role ?>/upload/profile/<?php echo $emp_pic ?>" alt class="w-px-40 h-auto rounded-circle" />
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">

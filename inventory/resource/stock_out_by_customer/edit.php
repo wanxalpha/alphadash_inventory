@@ -2,8 +2,8 @@
     include_once('../../controller/stock_out_by_customer.php');
     include_once("../../layouts/menu.php");
 
-    $product = getProduct();
-    $stakeholder = getCustomer();
+    $product = getProductMerchant();
+    $stakeholder = getRetailer();
 ?>
 
 <!-- Content wrapper -->

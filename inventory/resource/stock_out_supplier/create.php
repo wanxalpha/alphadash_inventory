@@ -2,7 +2,7 @@
     include_once('../../controller/stock_in.php');
     include_once("../../layouts/menu.php");
 
-    $product = getProduct();
+    $product = getProductMerchant();
     $stakeholder = getSupplier();
 ?>
 
@@ -11,12 +11,12 @@
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4">Stock In</h4>
+        <h4 class="fw-bold py-3 mb-4">Stock Out</h4>
 
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="card">
-                    <h5 class="card-header2">Add Stock In</h5>
+                    <h5 class="card-header2">Add Stock Out</h5>
                     <div class="card-body">
 
                         <form class="repeater" method="POST" action="../../controller/stock_out_supplier.php" enctype="multipart/form-data">
