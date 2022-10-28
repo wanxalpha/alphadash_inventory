@@ -104,14 +104,23 @@
         {
             $comp_id = $_SESSION['company'];
 
-            $sql = "SELECT employees.f_first_name,employees.f_last_name,c.name as category_name,employees.f_modified_date,employees.f_com_email,employees.f_id,employees.f_emp_id,
-                    employees.f_contact,employees.f_email
+            // $sql = "SELECT employees.f_first_name,employees.f_last_name,c.name as category_name,employees.f_modified_date,employees.f_com_email,employees.f_id,employees.f_emp_id,
+            //         employees.f_contact,employees.f_email
+            //         FROM employees 
+            //         INNER JOIN departments ON employees.f_department = departments.f_id
+            //         LEFT JOIN inv_stakeholder_category as c ON employees.f_designation = c.id
+            //         where departments.f_code = 'IV' AND employees.f_company_id=".$comp_id."
+            //         AND employees.f_delete ='N'
+            //         ORDER BY employees.f_modified_date desc";
+
+            $sql = "SELECT employees.FULLNAME,c.name as category_name,employees.CREATED_DATETIME,employees.COMPANY_EMAIL,employees.EMPLOYEE_ID,employees.EMPLOYEE_NO,
+                    employees.CONTACT_NO,employees.EMAIL
                     FROM employees 
-                    INNER JOIN departments ON employees.f_department = departments.f_id
-                    LEFT JOIN inv_stakeholder_category as c ON employees.f_designation = c.id
-                    where departments.f_code = 'IV' AND employees.f_company_id=".$comp_id."
-                    AND employees.f_delete ='N'
-                    ORDER BY employees.f_modified_date desc";
+                    INNER JOIN departments ON employees.DEPARTMENT = departments.DEPARTMENT_ID
+                    LEFT JOIN inv_stakeholder_category as c ON employees.DESIGNATION = c.id
+                    where employees.COMPANY_ID=".$comp_id."
+                    AND employees.DELETE_IND ='N'
+                    ORDER BY employees.MODIFIED_DATETIME desc";
 
             $result = mysqli_query($conn, $sql);
             // $num_rows = mysqli_num_rows($result);
@@ -120,10 +129,10 @@
 
             while ($row = mysqli_fetch_array($result)) {
                 $x += 1;
-                $id = $row['f_id'];
-                $name = $row['f_first_name'] .' '. $row['f_last_name'];
-                $created_at = date('d-m-Y H:i',strtotime($row['f_modified_date']));
-                $email = $row['f_com_email'] ;
+                $id = $row['EMPLOYEE_ID'];
+                $name = $row['FULLNAME'];
+                $created_at = date('d-m-Y H:i',strtotime($row['CREATED_DATETIME']));
+                $email = $row['COMPANY_EMAIL'] ;
                 $category_name = $row['category_name'];
 
                 echo '

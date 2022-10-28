@@ -22,7 +22,7 @@ define('DB_USER','root');
 
 define('DB_PASS','');
 
-define('DB_NAME','alphadash_inventory');
+define('DB_NAME','test');
 
 // Establish database connection.
 
@@ -54,7 +54,7 @@ try{
 
 	$DBpassword = "";
 
-	$db_name = "alphadash_inventory";
+	$db_name = "test";
 
 	
 

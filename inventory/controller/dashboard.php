@@ -6,17 +6,17 @@
     include_once('Lookup/SoftDelete.php');
 
 
-    $data_kpi = getKPISalesPerson();
-    $data_team_kpi = getKPISalesTeam();
+    // $data_kpi = getKPISalesPerson();
+    // $data_team_kpi = getKPISalesTeam();
     $data_stock_in = getStockIn();
     $data_stock_out = getStockOut();
     $data_stock_in_customer = getStockInCustomer();
     $data_stock_out_customer = getStockOutCustomer();
     $data_stock_return = getStockReturn();
-    $data_funnel_category = getCategoryFunnel();
-    $data_pillar = calculatePillar();
-    $data_pillar_increase = calculatePillar(true);
-    $data_calendar = Calendar();
+    // $data_funnel_category = getCategoryFunnel();
+    // $data_pillar = calculatePillar();
+    // $data_pillar_increase = calculatePillar(true);
+    // $data_calendar = Calendar();
     $purchase_details = purchaseDetails();
     $low_quantity_alert = lowQuantityAlert();
 
@@ -118,109 +118,6 @@
         return $sales_marketing;
     }
 
-    function getKPISalesPerson(){
-
-        global $conn;
-
-        $date = isset($_GET['kpi_year']) ? $_GET['kpi_year'] : date('Y');
-
-        $kpi_sales_person = isset($_GET['kpi_sales_person']) ? $_GET['kpi_sales_person'] : null ;
-
-        if(isset($_GET['kpi_month'])){
-
-            $full_name = date("F", mktime(0, 0, 0, $_GET['kpi_month'], 10));
-            $short_name = strtolower(date("M", mktime(0, 0, 0, $_GET['kpi_month'], 10)));
-
-            $list_month = [
-                $short_name =>$full_name
-            ];
-        }
-        else{
-            $list_month =  [
-                'jan' => 'January', 
-                'feb' => 'February', 
-                'mar' => 'March', 
-                'apr' => 'April', 
-                'may' => 'May', 
-                'jun' => 'June',
-                'jul' => 'July',
-                'aug' => 'August', 
-                'sep' => 'September', 
-                'oct' => 'October', 
-                'nov' => 'November', 
-                'dec' => 'December'
-            ];
-        }
-
-
-        $query = " AND year = $date";
-
-        if($kpi_sales_person && $_SESSION['role'] != 'User'){
-            $query = $query." AND employee_id=".$kpi_sales_person;
-        }
-
-        if($_SESSION['role'] == 'User'){
-            $query = $query." AND employee_id=".$_SESSION['emp_id'];
-        }   
-        $comp_id = $_SESSION['company'];
-
-        $sql = "SELECT sales_value.kpi_jan,sales_value.act_jan,sales_value.act_feb,sales_value.act_mar,sales_value.act_apr,sales_value.act_may,sales_value.act_jun,
-                sales_value.act_jul,sales_value.act_aug,sales_value.act_sep,sales_value.act_oct,sales_value.act_nov,sales_value.act_dec,
-                sales_value.kpi_jan,sales_value.kpi_feb,sales_value.kpi_mar,sales_value.kpi_apr,sales_value.kpi_may,sales_value.kpi_jun,sales_value.kpi_jul,sales_value.kpi_aug,
-                sales_value.kpi_sep,sales_value.kpi_oct,sales_value.kpi_nov,sales_value.kpi_dec,
-                employees.f_first_name,employees.f_last_name
-                FROM sales_value 
-                INNER JOIN employees ON sales_value.employee_id = employees.f_id
-                INNER JOIN departments ON employees.f_department = departments.f_id
-                where departments.f_code = 'SM' AND employees.f_company_id= ".$comp_id.$query;
-    
-        $result = mysqli_query($conn, $sql);
-        $data_kpi = [];
-        while ($row = mysqli_fetch_array($result)) { 
-            $data = $goals = [];
-
-
-            foreach($list_month as $idx => $month)
-            {
-                $goals = [];
-                if($row['kpi_'.$idx])
-                {
-                    $goals[] = [
-                        'name' => 'Expected',
-                        'value' =>  $row['kpi_'.$idx],
-                        // 'strokeWidth' => 10,
-                        // 'strokeDashArray' => 10,
-                        'strokeColor' => '#FF0000',
-                        'borderColor' => '#FF0000',
-                        'style' => [
-                          'color' => '#FF0000',
-                          'background' => '#FF0000'
-                        ],
-                
-                    ];
-                    
-                }
-                
-                $data [] = [
-                    'x' => $month,
-                    'y' => $row['act_'.$idx],
-                    'goals' => $goals
-                ];
-            }
-           
-
-           
-            
-            $data_kpi[] = [
-                'name' => $row['f_first_name'] .' '. $row['f_last_name'],
-                'data' =>$data
-                // 'data' => [$row['act_jan'],$row['act_feb'],$row['act_mar'],$row['act_apr'],$row['act_may'],$row['act_jun'],$row['act_jul'],$row['act_aug'],$row['act_sep'],$row['act_oct'],$row['act_nov'],$row['act_dec']],
-                // 'markers' => [$row['act_jan'],$row['act_feb'],$row['act_mar'],$row['act_apr'],$row['act_may'],$row['act_jun'],$row['act_jul'],$row['act_aug'],$row['act_sep'],$row['act_oct'],$row['act_nov'],$row['act_dec']],
-            ];
-        }
-
-        return $data_kpi;
-    }
 
     function getKPISalesTeam(){
         global $conn;

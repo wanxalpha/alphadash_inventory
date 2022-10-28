@@ -32,7 +32,7 @@ function login($username,$password){
   $year = date("Y", $t);
   $hour = date("H", $t);
   $minute = date("i", $t);
-  $query = "SELECT * FROM employees WHERE f_com_email='$username' AND f_password='$password' AND f_delete='N'";
+  $query = "SELECT * FROM employees WHERE COMPANY_EMAIL='$username' AND PASSWORD='$password' AND DELETE_IND='N'";
   // echo $query; exit;
   $result = mysqli_query($conn, $query);
   $num = mysqli_num_rows($result);
@@ -40,12 +40,12 @@ function login($username,$password){
   if ($num == 1) {
     // echo "ok"; exit;
     $row = mysqli_fetch_array($result);
-    $emp_id = $row['f_id'];
-    $emp_level = $row['f_user_level'];
-    $company_id = $row['f_company_id'];
-    $designation = $row['f_designation'];
+    $emp_id = $row['EMPLOYEE_ID'];
+    $emp_level = $row['USER_LEVEL'];
+    $company_id = $row['COMPANY_ID'];
+    $designation = $row['DESIGNATION'];
     
-    if($row['f_department'] == '41'){
+    if($row['DEPARTMENT'] == '41'){
       $sql_designation = "SELECT * 
                   FROM inv_stakeholder_category 
                   WHERE id = '$designation'";
@@ -57,7 +57,7 @@ function login($username,$password){
     
     $designation_name = $row_designation['name'];
 
-    $sql = "INSERT INTO login_time (f_emp_id, f_clock_in, f_created_date, f_modified_date) VALUES ('$emp_id', '$curtime', '$now', '$now')";
+    $sql = "INSERT INTO login_timestamp (EMPLOYEE_ID, CLOCK_IN, CREATED_DATETIME, MODIFIED_DATETIME) VALUES ('$emp_id', '$curtime', '$now', '$now')";
     $result = mysqli_query($conn, $sql);
 
     $_SESSION['userlogin'] = $username;

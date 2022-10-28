@@ -16,21 +16,28 @@ if (strlen($_SESSION['userlogin']) == 0) {
 }
     $emp_id = $_SESSION['emp_id'];
 
-    $sql = "SELECT company.f_logo,employees.f_first_name,employees.f_last_name,employees.f_emp_id,employees.f_designation,employees.f_picture,designations.f_position FROM employees
-            LEFT JOIN designations ON employees.f_designation = designations.f_id
-            LEFT JOIN company ON employees.f_company_id = company.f_id
-            WHERE employees.f_id=$emp_id";
+    // $sql = "SELECT company.f_logo,employees.f_first_name,employees.f_last_name,employees.f_emp_id,employees.f_designation,employees.f_picture,designations.f_position FROM employees
+    // LEFT JOIN designations ON employees.f_designation = designations.f_id
+    // LEFT JOIN company ON employees.f_company_id = company.f_id
+    // WHERE employees.f_id=$emp_id";
+
+
+    $sql = "SELECT company.COMPANY_LOGO,employees.FULLNAME,employees.EMPLOYEE_ID,employees.DESIGNATION,employees.PROFILE_PICTURE,designations.DESIGNATION_NAME 
+            FROM employees
+            LEFT JOIN designations ON employees.DESIGNATION = designations.DESIGNATION_ID
+            LEFT JOIN company ON employees.COMPANY_ID = company.COMPANY_ID
+            WHERE employees.EMPLOYEE_ID=$emp_id";
 
 
     $result = mysqli_query($conn, $sql);
     
     while ($row = mysqli_fetch_array($result)) {
-        $emp_name = $row['f_first_name'] .' ' .$row['f_last_name'];
-        $emp_code = $row['f_emp_id'];
-        $designation = $row['f_designation'];
-        $emp_pic = $row['f_picture'];
-        $post_name = $row['f_position'];
-        $company_logo = isset($row['f_logo']) ? $row['f_logo'] : 'logo.png';
+        $emp_name = $row['FULLNAME'];
+        $emp_code = $row['EMPLOYEE_ID'];
+        $designation = $row['DESIGNATION'];
+        $emp_pic = $row['PROFILE_PICTURE'];
+        $post_name = $row['DESIGNATION_NAME'];
+        $company_logo = isset($row['COMPANY_LOGO']) ? $row['COMPANY_LOGO'] : 'logo.png';
     }
 
 function postAction($type,$next_action,$sql,$route)
