@@ -115,7 +115,7 @@ $file_role = $_SESSION['role'] == 'User' ? 'user' : 'admin';
 
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Menu</span></li>
 
-                    <?php if($_SESSION['designation'] == '4'){ ?>
+                    <?php if($_SESSION['designation'] == '1'){ ?>
                     <!-- merchant -->
                         <li class="menu-item">
                             <a href="../available_stock/index.php" class="menu-link">

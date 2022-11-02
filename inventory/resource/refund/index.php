@@ -12,7 +12,7 @@
       <div class="col-md-12" align='right'>
       <button class="btn btn-primary" id="btn_export_pdf" >Export PDF</button>
       <button class="btn btn-primary" id="btn_export_excel" >Export Excel</button>
-        <?php if ($_SESSION['designation'] == '4'){?>
+        <?php if ($_SESSION['designation'] == '1'){?>
             <a href="../refund/create.php" class="btn btn-primary">Add Stock Return</a>  
         <?php } ?>
       </div>
@@ -43,7 +43,7 @@
         </select>
       </div>
 
-      <?php if ($_SESSION['designation'] == '4'){?>
+      <?php if ($_SESSION['designation'] == '1'){?>
         <div class="col-md-2">
           <label class="form-label">Stakeholder</label>
           <select name="filter_stakeholder" id="filter_stakeholder" class="select2 form-select" required>

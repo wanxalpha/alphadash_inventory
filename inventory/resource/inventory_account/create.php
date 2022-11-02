@@ -23,19 +23,22 @@ $stakeholder_category = getStakeholderCategory();
                            
                         <div class="row">
                             <div class="mb-3 col-md-4">
-                                <label for="name" class="form-label">First Name</label>
-                                <input class="form-control" type="text" id="f_first_name"
-                                    name="f_first_name" autofocus required />
-                            </div>
-                            <div class="mb-3 col-md-4">
-                                <label for="name" class="form-label">Last Name</label>
-                                <input class="form-control" type="text" id="f_last_name"
-                                    name="f_last_name" autofocus required />
+                                <label for="name" class="form-label">Full Name</label>
+                                <input class="form-control" type="text" id="fullname"
+                                    name="fullname" autofocus required />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="name" class="form-label">Contact Number</label>
                                 <input class="form-control" type="text" id="f_contact"
                                     name="f_contact" autofocus required />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="category_id" class="form-label">Category</label>
+                                <select name="category_id" id="category_id" class="select2 form-select" required>
+                                    <option hidden value="">Select Stakeholder Category</option>
+                                    <option value="2">Retailer</option>
+                                    <option value="3">Supplier</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -50,22 +53,9 @@ $stakeholder_category = getStakeholderCategory();
                                     id="f_password" required />
                             </div>
                             <div class="mb-3 col-md-4">
-                                <label for="category_id" class="form-label">Category</label>
-                                <select name="category_id" id="category_id" class="select2 form-select" required>
-                                    <option hidden value="">Select Stakeholder Category</option>
-                                    <?php while ($row = mysqli_fetch_array($stakeholder_category)) { ?>
-                                    <option value="<?php echo $row['id'] ?>"> <?php echo $row['name'] ?>
-                                    </option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="mb-3 col-md-4">
                                     <label for="f_user_level" class="form-label">Address</label>
                                     <textarea type="text" class="form-control" id="address" name="address"></textarea>
-                            </div>      
+                            </div> 
                         </div>
                        
                         <div class="mt-4">

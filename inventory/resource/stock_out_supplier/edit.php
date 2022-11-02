@@ -151,7 +151,7 @@
                                     
                                     <button type="submit" name="action" value="update"
                                         class="btn btn-primary me-2 float-right">Submit</button>
-                                    <?php if($_SESSION['role'] == 'Master'){ ?>
+                                    <?php if($_SESSION['designation'] == '2'){ ?>
                                         <a class="btn btn-warning me-2 float-right" href="../../controller/stock_in.php?validate=<?php echo $row['id']; ?>">Validate</a>
                                     <?php } ?>
                                 </div>

@@ -42,7 +42,5 @@
 </div>
 
 <?php include_once("../../layouts/footer.php"); ?>
-<script>
-  var status = '<?php echo $_GET['status'] ?  $_GET['status'] + 1 : 1;  ?>';
-</script>
+
 <script type="text/javascript" src="../../assets/js/resource/product.js"> </script>

@@ -95,7 +95,7 @@
         </div>
     <?php }else{ ?>
         <div class="row">
-            <?php if($_SESSION['designation'] == '4'){?>
+            <?php if($_SESSION['designation'] == '1'){?>
                 <div class="col-md-6 mb-4">
                     <div class="card mb-3 overflow-hidden h-100">
                         <h5 class="card-header2" style="text-align: center;">Low Quantity Alert</h5>
@@ -165,7 +165,7 @@
                 </div>
             </div>
 
-            <?php if($_SESSION['designation'] == '4'){?>
+            <?php if($_SESSION['designation'] == '1'){?>
                 <div class="col-md-6 mb-4">
                     <div class="card mb-3 overflow-hidden h-100">
                         <h5 class="card-header2" style="text-align: center;">Stock Out</h5>

@@ -4,15 +4,16 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') 
     {
         $action =  isset($_POST['action']) ? $_POST['action'] : null;
+        $comp_id = $_SESSION['company'];
 
-        $sql_department = "SELECT f_id FROM departments WHERE f_code='IV'";
+        $sql_department = "SELECT DEPARTMENT_ID FROM departments WHERE COMPANY_ID=$comp_id and DEPARTMENT_NAME='Inventory'";
         $result_department = mysqli_query($conn, $sql_department);
         $deparment_id = null;
         $role = 'Admin';
         $check_employee = null;
 
         while ($row = mysqli_fetch_array($result_department)) {
-            $deparment_id = $row['f_id'];
+            $deparment_id = $row['DEPARTMENT_ID'];
         }
 
         if($action == 'create')
@@ -23,8 +24,8 @@
 
             // if(!$check_employee)
             // {
-                $sql = "INSERT into employees (f_first_name,f_last_name,f_com_email,f_department,f_designation,f_password,f_user_level,f_company_id,f_contact,f_emp_status,f_address,f_created_date,f_modified_date) 
-                values ('$_POST[f_first_name]','$_POST[f_last_name]','$_POST[f_com_email]','$deparment_id','$_POST[category_id]','$_POST[f_password]','$role','$comp_id','$_POST[f_contact]','$f_emp_status','$_POST[address]',current_timestamp(),current_timestamp())";
+                $sql = "INSERT into employees (FULLNAME,EMPLOYEE_NO,COMPANY_EMAIL,DEPARTMENT,DESIGNATION,PASSWORD,USER_LEVEL,COMPANY_ID,CONTACT_NO,EMPLOYMENT_STATUS,HOME_ADDRESS,CREATED_DATETIME,MODIFIED_DATETIME) 
+                values ('$_POST[fullname]','00','$_POST[f_com_email]','$deparment_id','$_POST[category_id]','$_POST[f_password]','$role','$comp_id','$_POST[f_contact]','$f_emp_status','$_POST[address]',current_timestamp(),current_timestamp())";
             // }
             // echo($sql);exit();
         }
@@ -32,11 +33,13 @@
         {
             // $check_employee = checkEmployeeID($_POST['f_emp_id'],$_POST['id']);
 
-            $sql = "UPDATE employees SET f_first_name='$_POST[f_first_name]',f_last_name='$_POST[f_last_name]',f_com_email='$_POST[f_com_email]',f_password='$_POST[f_password]',f_identity='$_POST[f_identity]',f_contact='$_POST[f_contact]',f_user_level='$_POST[f_user_level]',f_designation='$_POST[category_id]',f_address='$_POST[address]',f_modified_date=current_timestamp() WHERE f_id='$_POST[id]'";
+            $sql = "UPDATE employees SET FULLNAME='$_POST[fullname]',COMPANY_EMAIL='$_POST[f_com_email]',PASSWORD='$_POST[f_password]',CONTACT_NO='$_POST[f_contact]',DESIGNATION='$_POST[category_id]',HOME_ADDRESS='$_POST[address]',MODIFIED_DATETIME=current_timestamp() WHERE EMPLOYEE_ID='$_POST[id]'";
+            // echo($sql);exit();
+        
         }
         elseif($action == 'delete')
         {
-            $sql = "UPDATE employees SET f_delete='Y' where f_id='$_POST[id]'";
+            $sql = "UPDATE employees SET DELETE_IND='Y' where EMPLOYEE_ID='$_POST[id]'";
 
             postActionAjax('Sales Account',$sql);
 
@@ -64,7 +67,6 @@
                     if(!$check_employee){
                         $sql = "INSERT into employees (f_first_name,f_last_name,f_com_email,f_email,f_contact,f_identity,f_department,f_password,f_user_level,f_emp_id,f_emp_status,f_company_id,f_created_date,f_modified_date) 
                         values ('".$getData[1]."','".$getData[2]."','".$getData[3]."','".$getData[4]."','".$getData[5]."','".$getData[6]."','".$deparment_id."','".$getData[6]."','".$role."','".$getData[7]."','".$f_emp_status."','".$comp_id."',current_timestamp(),current_timestamp())";
-
 
                         $result = mysqli_query($conn, $sql);
                     }
@@ -96,7 +98,7 @@
 
 
         if($id){
-            $sql = "SELECT f_id,f_first_name,f_last_name,f_com_email,f_identity,f_password,f_emp_id,f_contact,f_email,f_user_level,f_designation, f_address FROM employees WHERE f_id=".$id;
+            $sql = "SELECT EMPLOYEE_ID,FULLNAME,COMPANY_EMAIL,PASSWORD,EMPLOYEE_ID,CONTACT_NO,EMAIL,USER_LEVEL,DESIGNATION,HOME_ADDRESS FROM employees WHERE EMPLOYEE_ID=".$id;
 
             $result = mysqli_query($conn, $sql);
         }
@@ -109,15 +111,15 @@
             //         FROM employees 
             //         INNER JOIN departments ON employees.f_department = departments.f_id
             //         LEFT JOIN inv_stakeholder_category as c ON employees.f_designation = c.id
-            //         where departments.f_code = 'IV' AND employees.f_company_id=".$comp_id."
+            //         where departments.f_code = 'IV' 
+            //         AND employees.f_company_id=".$comp_id."
             //         AND employees.f_delete ='N'
             //         ORDER BY employees.f_modified_date desc";
 
-            $sql = "SELECT employees.FULLNAME,c.name as category_name,employees.CREATED_DATETIME,employees.COMPANY_EMAIL,employees.EMPLOYEE_ID,employees.EMPLOYEE_NO,
+            $sql = "SELECT employees.FULLNAME,employees.DESIGNATION,employees.CREATED_DATETIME,employees.COMPANY_EMAIL,employees.EMPLOYEE_ID,employees.EMPLOYEE_NO,
                     employees.CONTACT_NO,employees.EMAIL
                     FROM employees 
                     INNER JOIN departments ON employees.DEPARTMENT = departments.DEPARTMENT_ID
-                    LEFT JOIN inv_stakeholder_category as c ON employees.DESIGNATION = c.id
                     where employees.COMPANY_ID=".$comp_id."
                     AND employees.DELETE_IND ='N'
                     ORDER BY employees.MODIFIED_DATETIME desc";
@@ -133,14 +135,22 @@
                 $name = $row['FULLNAME'];
                 $created_at = date('d-m-Y H:i',strtotime($row['CREATED_DATETIME']));
                 $email = $row['COMPANY_EMAIL'] ;
-                $category_name = $row['category_name'];
+                $designation = $row['DESIGNATION'];
+                
+                if($designation == '1'){
+                    $designation_name = 'Merchant';
+                }elseif($designation == '2'){
+                    $designation_name = 'Retailer';
+                }elseif($designation == '3'){
+                    $designation_name = 'Supplier';
+                }
 
                 echo '
                 <tr>
                     <td>' .$x. '</td>
                     <td>' .$name . '</td>
                     <td>' .$email. '</td>
-                    <td>' .$category_name. '</td>
+                    <td>' .$designation_name. '</td>
                     <td>' .$created_at.'</td>
 
                     <td style="text-align:center">

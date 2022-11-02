@@ -159,6 +159,16 @@ function getProductCategory(){
 
 }
 
+function getProduct(){
+    global $conn;
+    $comp_id = $_SESSION['company'];
+
+    $sql = "SELECT a.id,a.name 
+            FROM inv_product AS a
+            where a.deleted_at IS NULL and a.company_id = '$comp_id'";
+    return $result_product = mysqli_query($conn, $sql);
+}
+
 function getProductMerchant(){
     global $conn;
     $comp_id = $_SESSION['company'];
@@ -167,9 +177,7 @@ function getProductMerchant(){
             FROM inv_product AS a
             LEFT JOIN inv_available_stock AS b ON a.id = b.product_id 
             where a.deleted_at IS NULL and a.company_id = '$comp_id' AND b.quantity IS NOT NULL";
-
     return $result_product = mysqli_query($conn, $sql);
-
 }
 
 function getProductRetailer(){
@@ -183,16 +191,15 @@ function getProductRetailer(){
             where a.deleted_at IS NULL and b.stakeholder_id = '$emp_id' and a.company_id = '$comp_id' AND b.quantity IS NOT NULL";
 
     return $result_product = mysqli_query($conn, $sql);
-
 }
 
 function getSupplier(){
     global $conn;
     $comp_id = $_SESSION['company'];
 
-    $sql = "SELECT f_id as id,f_first_name as name 
+    $sql = "SELECT EMPLOYEE_ID as id,FULLNAME as name 
             FROM employees
-            where f_designation = '3' and f_delete = 'N' and f_company_id = '$comp_id'";
+            where DESIGNATION = '3' and DELETE_IND = 'N' and COMPANY_ID = '$comp_id'";
 
     return $result_stakeholder = mysqli_query($conn, $sql);
 
@@ -202,9 +209,9 @@ function getRetailer(){
     global $conn;
     $comp_id = $_SESSION['company'];
 
-    $sql = "SELECT f_id as id,f_first_name as name 
+    $sql = "SELECT EMPLOYEE_ID as id,FULLNAME as name
             FROM employees
-            where f_designation = '2' and f_delete = 'N' and f_company_id = '$comp_id'";
+            where DESIGNATION = '2' and DELETE_IND = 'N' and COMPANY_ID = '$comp_id'";
 
     return $result_stakeholder = mysqli_query($conn, $sql);
 

@@ -149,7 +149,7 @@
             $comp_id = $_SESSION['company'];
             $emp_id = $_SESSION['emp_id'];
 
-            $query =  " where a.deleted_at IS NULL AND a.stakeholder_id = '$emp_id' and company_id = '$comp_id'";
+            $query =  " where a.deleted_at IS NULL AND a.stakeholder_id = '$emp_id' and a.company_id = '$comp_id'";
 
             if(isset($_GET["month"]) ? $_GET["month"] : null ){
                 $query = $query." AND MONTH(a.created_at) = ".$_GET['month'];
@@ -163,9 +163,9 @@
                 $query = $query." AND a.stakeholder_id = ".$_GET['stakeholder'];
             }
 
-            $sql = "SELECT a.id , a.reference_number as reference_number, a.status as status,a.created_at as created_at, b.f_first_name as stakeholder_name 
+            $sql = "SELECT a.id , a.reference_number as reference_number, a.status as status,a.created_at as created_at, b.FULLNAME as stakeholder_name 
                     FROM inv_stock_in a 
-                    LEFT JOIN employees b ON a.stakeholder_id = b.f_id 
+                    LEFT JOIN employees b ON a.stakeholder_id = b.EMPLOYEE_ID 
                     $query
                     ORDER BY a.created_at desc";
             
@@ -186,6 +186,7 @@
                 }else{
                     $status = 'Validated';
                 }
+                
                 if($row['status'] == '0'){
                     echo '
                     <tr>
