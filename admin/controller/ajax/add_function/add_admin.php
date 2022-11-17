@@ -17,7 +17,9 @@ $last_name = htmlspecialchars($_POST['last_name']);
 $emp_id = htmlspecialchars($_POST['emp_id']);
 $com_email = htmlspecialchars($_POST['com_email']);
 $contact = htmlspecialchars($_POST['contact']);
-$address = htmlspecialchars($_POST['address']);
+$address_1 = htmlspecialchars($_POST['address_1']);
+$address_2 = htmlspecialchars($_POST['address_2']);
+$address_3 = htmlspecialchars($_POST['address_3']);
 $com_name = htmlspecialchars($_POST['com_name']);
 $password = htmlspecialchars($_POST['password']);
 
@@ -26,18 +28,18 @@ $result = mysqli_query($conn, $query);
 $nums = mysqli_num_rows($result);
 
 if($nums == 0){
-    $sql2 = "INSERT INTO company (f_company_name, f_contact, f_address, f_created_date, f_modified_date) VALUES ('$com_name', '$contact', '$address', '$now', '$now')";
+    $sql2 = "INSERT INTO company (f_company_name, f_contact, f_address_1, f_address_2, f_address_3, f_created_date, f_modified_date) VALUES ('$com_name', '$contact', '$address_1', '$address_2', '$address_3', '$now', '$now')";
     $result2 = mysqli_query($conn, $sql2);
 
     $company_id = mysqli_insert_id($conn);
 
-    $sql = "INSERT INTO employees (f_emp_id, f_company_id, f_first_name, f_last_name, f_com_email, f_emp_status, f_password, f_user_level, f_created_date, f_modified_date) VALUES ('$emp_id', '$company_id', '$first_name', '$last_name', '$com_email', '1',  '$password', 'Master', '$now', '$now')";
+    $sql = "INSERT INTO employees (f_emp_id, f_company_id, f_first_name, f_last_name, f_contact, f_com_email, f_emp_status, f_department, f_designation, f_password, f_user_level, f_created_date, f_modified_date) VALUES ('$emp_id', '$company_id', '$first_name', '$last_name', '$contact', '$com_email', '1', '41', '4','$password', 'Master', '$now', '$now')";
     $result = mysqli_query($conn, $sql);
 }else{
     while($rows = mysqli_fetch_array($result)){
         $company_id = $rows['f_id'];
 
-        $sql = "INSERT INTO employees (f_emp_id, f_company_id, f_first_name, f_last_name, f_com_email, f_emp_status, f_password, f_user_level, f_created_date, f_modified_date) VALUES ('$emp_id', '$company_id', '$first_name', '$last_name', '$com_email', '1',  '$password', 'Master', '$now', '$now')";
+        $sql = "INSERT INTO employees (f_emp_id, f_company_id, f_first_name, f_last_name, f_contact, f_com_email, f_emp_status, f_department, f_designation, f_password, f_user_level, f_created_date, f_modified_date) VALUES ('$emp_id', '$company_id', '$first_name', '$last_name', '$contact', '$com_email', '1', '41', '4', '$password', 'Master', '$now', '$now')";
         $result = mysqli_query($conn, $sql);
     }
 }

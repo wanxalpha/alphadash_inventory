@@ -10,9 +10,9 @@
         {
             $comp_id = $_SESSION['company'];
 
-            $sql = "INSERT INTO inv_product ('company_id,name,product_category_id,product_code,sales_price,buy_price,low_quantity_alert,description,created_by,created_at) 
+            $sql = "INSERT INTO inv_product (company_id,name,product_category_id,product_code,sales_price,buy_price,low_quantity_alert,description,created_by,created_at) 
             VALUES ('$comp_id','$_POST[name]','$_POST[product_category_id]','$_POST[product_code]','$_POST[sales_price]','$_POST[buy_price]','$_POST[low_quantity_alert]','$_POST[description]',$emp_id,current_timestamp())";
-
+            
             $result = $conn->query($sql);
 
             $lastInsert = $conn->insert_id;

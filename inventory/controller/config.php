@@ -4,13 +4,14 @@
 
 // DB credentials.
 
-// define('DB_HOST','110.4.45.184');
+// define('DB_HOST','67.23.254.53');
 
-// define('DB_USER','ajebesto_alphacor_prod');
+// define('DB_USER','alphacor_prod');
 
-// define('DB_PASS','alphacor123');
+// define('DB_PASS','@1phac0ret3ch123');
 
-// define('DB_NAME','ajebesto_alphadash_inventory');
+// define('DB_NAME','alphacor_alphadash-sales');
+
 
 
 
@@ -33,17 +34,13 @@ try{
     exit("Error: " . $e->getMessage());
 
 }
+	// $servername = "67.23.254.53";
 
+	// $DBusername = "alphacor_prod";
 
+	// $DBpassword = "@1phac0ret3ch123";
 
-    // $servername = "110.4.45.184";
-
-	// $DBusername = "ajebesto_alphacor_prod";
-
-	// $DBpassword = "alphacor123";
-
-	// $db_name = 'ajebesto_alphadash_inventory';
-
+	// $db_name = 'alphacor_alphadash-sales';
 
 
 	$servername = "localhost";

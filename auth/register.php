@@ -102,8 +102,16 @@ $minute = date("i", $t);
                                             <input name="contact" required class="form-control" type="text">
                                         </div>
                                         <div class="col-md-12 mb-0">
-                                            <label for="emailExLarge" class="form-label">Address<span class="text-danger">*</span></label>
-                                            <input name="address" required class="form-control" type="text">
+                                            <label for="emailExLarge" class="form-label">Address 1<span class="text-danger">*</span></label>
+                                            <input name="address_1" required class="form-control" type="text">
+                                        </div>
+                                        <div class="col-md-12 mb-0">
+                                            <label for="emailExLarge" class="form-label">Address 2<span class="text-danger">*</span></label>
+                                            <input name="address_2" required class="form-control" type="text">
+                                        </div>
+                                        <div class="col-md-12 mb-0">
+                                            <label for="emailExLarge" class="form-label">Address 3<span class="text-danger">*</span></label>
+                                            <input name="address_3" required class="form-control" type="text">
                                         </div>
                                         <div class="col-md-12 mb-0">
                                             <label for="emailExLarge" class="form-label">Password<span class="text-danger">*</span></label>

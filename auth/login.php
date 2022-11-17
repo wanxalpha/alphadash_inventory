@@ -169,9 +169,9 @@ function login($username,$password){
                 <div class="mb-3">
                   <button class="btn btn-primary d-grid w-100" type="submit" name="login"><a href="../dashboard/dashboard-a.php"></a> Login</button>
                 </div>
-                <!-- <div class="mb-3">
-                <a class="btn btn-primary d-grid w-100" href="register.php">Register</a>
-                </div> -->
+                <div class="mb-3" style="text-align: center;">
+                  <label> <font color=black>New on our platform? <a href="register.php" style="color: black"><u>Create an account</u></a></font></label>
+                </div>
               </form>
             </div>
           </div>

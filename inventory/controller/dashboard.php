@@ -372,11 +372,13 @@
         
         $result = mysqli_query($conn, $sql);
 
-        while ($row = mysqli_fetch_array($result)) { 
+        if($result){
+            while ($row = mysqli_fetch_array($result)) { 
 
-            if($row['status'] ==  '0') $open += 1;
+                if($row['status'] ==  '0') $open += 1;
 
-            elseif($row['status'] ==  '1') $validated += 1;
+                elseif($row['status'] ==  '1') $validated += 1;
+            }
         }
 
         return [$open,$validated];
@@ -407,11 +409,13 @@
        
         $result = mysqli_query($conn, $sql);
 
-        while ($row = mysqli_fetch_array($result)) { 
+        if($result){
+            while ($row = mysqli_fetch_array($result)) { 
 
-            if($row['status'] ==  '0') $open += 1;
+                if($row['status'] ==  '0') $open += 1;
 
-            elseif($row['status'] ==  '1') $validated += 1;
+                elseif($row['status'] ==  '1') $validated += 1;
+            }
         }
 
         return [$open,$validated];
@@ -445,11 +449,13 @@
         
         $result = mysqli_query($conn, $sql);
 
-        while ($row = mysqli_fetch_array($result)) { 
+        if($result){
+            while ($row = mysqli_fetch_array($result)) { 
 
-            if($row['status'] ==  '0') $open += 1;
+                if($row['status'] ==  '0') $open += 1;
 
-            elseif($row['status'] ==  '1') $validated += 1;
+                elseif($row['status'] ==  '1') $validated += 1;
+            }
         }
 
         return [$open,$validated];
@@ -480,11 +486,13 @@
         
         $result = mysqli_query($conn, $sql);
 
-        while ($row = mysqli_fetch_array($result)) { 
+        if($result){
+            while ($row = mysqli_fetch_array($result)) { 
 
-            if($row['status'] ==  '0') $open += 1;
+                if($row['status'] ==  '0') $open += 1;
 
-            elseif($row['status'] ==  '1') $validated += 1;
+                elseif($row['status'] ==  '1') $validated += 1;
+            }
         }
 
         return [$open,$validated];
@@ -522,15 +530,17 @@
        
         $result = mysqli_query($conn, $sql);
 
-        while ($row = mysqli_fetch_array($result)) { 
+        if($result){
+            while ($row = mysqli_fetch_array($result)) { 
 
-            if($row['status'] ==  '0') $open += 1;
+                if($row['status'] ==  '0') $open += 1;
 
-            elseif($row['status'] ==  '1') $validated += 1;
+                elseif($row['status'] ==  '1') $validated += 1;
 
-            elseif($row['status'] ==  '2') $returned += 1;
+                elseif($row['status'] ==  '2') $returned += 1;
+            }
         }
-
+        
         return [$open,$validated,$returned];
     }
 
